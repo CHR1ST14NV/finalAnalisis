@@ -1,0 +1,13 @@
+{
+  "annotations": {"list": []},
+  "panels": [
+    {"type": "stat", "title": "Request p95 latency", "targets": [], "gridPos": {"x":0,"y":0,"w":12,"h":4}},
+    {"type": "stat", "title": "Throughput (req/s)", "targets": [], "gridPos": {"x":12,"y":0,"w":12,"h":4}},
+    {"type": "stat", "title": "Error rate", "targets": [], "gridPos": {"x":0,"y":4,"w":12,"h":4}},
+    {"type": "stat", "title": "Stock turns", "targets": [], "gridPos": {"x":12,"y":4,"w":12,"h":4}},
+    {"type": "stat", "title": "Lead time", "targets": [], "gridPos": {"x":0,"y":8,"w":12,"h":4}}
+  ],
+  "schemaVersion": 36,
+  "title": "Channel KPIs"
+}
+

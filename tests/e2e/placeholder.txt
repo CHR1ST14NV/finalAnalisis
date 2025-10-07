@@ -1,0 +1,1 @@
+Add API Playwright tests here if needed.

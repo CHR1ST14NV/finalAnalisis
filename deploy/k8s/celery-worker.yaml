@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chan-celery-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chan-celery-worker
+  template:
+    metadata:
+      labels:
+        app: chan-celery-worker
+    spec:
+      containers:
+        - name: worker
+          image: chan-platform:web
+          command: ["bash","-lc","celery -A chan_platform worker -l info"]
+          envFrom:
+            - configMapRef:
+                name: chan-config
+            - secretRef:
+                name: chan-secrets
+
