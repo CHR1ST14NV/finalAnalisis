@@ -12,4 +12,4 @@ WORKDIR /app
 COPY . /app
 RUN python -m compileall .
 EXPOSE 8000
-CMD ["bash", "-lc", "bash scripts/wait_for_db.sh ${DB_HOST:-db} ${DB_USER:-chan} && python manage.py collectstatic --noinput && python manage.py makemigrations --noinput && python manage.py migrate && opentelemetry-instrument gunicorn chan_platform.asgi:application -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 --workers 3 --timeout 120"]
+CMD ["bash", "-lc", "bash scripts/wait_for_db.sh ${DB_HOST:-db} ${DB_USER:-chan} && python manage.py collectstatic --noinput && python manage.py makemigrations --noinput && python manage.py migrate && if [ -n \"$DJANGO_SUPERUSER_USERNAME\" ]; then python manage.py createsuperuser --noinput || true; fi && python manage.py seed_demo || true && opentelemetry-instrument gunicorn chan_platform.asgi:application -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 --workers 3 --timeout 120"]

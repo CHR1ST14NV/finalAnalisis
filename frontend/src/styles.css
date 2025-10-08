@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --radius: 14px;
+}
+
+.container {
+  @apply max-w-7xl mx-auto px-4;
+}
+
+.card {
+  @apply rounded-xl bg-bg-card/80 border border-neutral-800 p-5 shadow-sm;
+}
+
+.btn {
+  @apply inline-flex items-center justify-center rounded-lg bg-primary/90 hover:bg-primary text-white px-4 py-2 transition-colors;
+}
+
+.muted { @apply text-fg-muted; }
+
+.chip { @apply rounded-full px-2 py-0.5 text-xs border border-neutral-700; }
+
+.table { @apply w-full border-collapse text-sm; }
+.table th { @apply text-left font-semibold text-neutral-300 border-b border-neutral-800 py-2; }
+.table td { @apply border-b border-neutral-900 py-2; }
+
+.skeleton { @apply animate-pulse bg-neutral-800 rounded; }
+
+header.site {
+  @apply sticky top-0 z-50 bg-neutral-950/80 backdrop-blur border-b border-neutral-900;
+}
+
+nav.top a { @apply text-neutral-300 hover:text-white transition-colors; }
+nav.top a.active { @apply text-white; }
+

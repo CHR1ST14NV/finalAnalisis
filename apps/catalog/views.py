@@ -1,8 +1,8 @@
 from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from .models import Product, SKU
-from .serializers import ProductSerializer, SKUSerializer
+from .models import Product, SKU, Category
+from .serializers import ProductSerializer, SKUSerializer, CategorySerializer
 
 
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
@@ -26,3 +26,8 @@ class SKUViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = SKUSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
+
+class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]

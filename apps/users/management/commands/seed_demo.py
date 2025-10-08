@@ -15,7 +15,18 @@ class Command(BaseCommand):
         U = get_user_model()
         if not U.objects.filter(username="admin").exists():
             U.objects.create_superuser("admin", "admin@example.com", "admin123!")
-        for r in ["admin", "operator", "distributor", "retailer", "auditor"]:
+        # Roles requeridos
+        for r in [
+            "admin",
+            "operador_central",
+            "distribuidor",
+            "minorista",
+            "auditor",
+            # aliases en inglés por compatibilidad
+            "operator",
+            "distributor",
+            "retailer",
+        ]:
             Role.objects.get_or_create(name=r)
         w1, _ = Warehouse.objects.get_or_create(code="WH1", defaults={"name": "Central"})
         w2, _ = Warehouse.objects.get_or_create(code="WH2", defaults={"name": "Backup"})
@@ -32,6 +43,18 @@ class Command(BaseCommand):
             Promotion.objects.get_or_create(name=f"Promo {j}", defaults={"percent_off": 5 * j, "active": True, "priority": j, "starts_at": timezone.now(), "ends_at": timezone.now()})
         pol, _ = Policy.objects.get_or_create(name="Default policy")
         Rebate.objects.get_or_create(policy=pol, percent=5, threshold_amount=0)
+        # Usuarios demo (2 distribuidores, 3 minoristas)
+        for i in range(1, 3):
+            u, _ = U.objects.get_or_create(username=f"dist{i}", defaults={"email": f"dist{i}@example.com"})
+            u.set_password("demo123!")
+            u.save()
+            u.roles.add(Role.objects.get(name="distribuidor"))
+        for i in range(1, 4):
+            u, _ = U.objects.get_or_create(username=f"minor{i}", defaults={"email": f"minor{i}@example.com"})
+            u.set_password("demo123!")
+            u.save()
+            u.roles.add(Role.objects.get(name="minorista"))
+
         # sample orders
         w = w1
         skus = list(SKU.objects.all()[:2])

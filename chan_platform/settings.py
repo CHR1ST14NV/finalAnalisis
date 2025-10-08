@@ -16,6 +16,8 @@ env = environ.Env(
     TIME_ZONE=(str, "UTC"),
     OTEL_EXPORTER_OTLP_ENDPOINT=(str, "http://otel-collector:4317"),
     CORS_ALLOWED_ORIGINS=(list, []),
+    PROMETHEUS_URL=(str, ""),
+    WEBHOOK_HMAC_SECRET=(str, ""),
 )
 
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
@@ -127,6 +129,8 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 20,
     "DEFAULT_THROTTLE_CLASSES": [
         "rest_framework.throttling.UserRateThrottle",
         "rest_framework.throttling.AnonRateThrottle",
@@ -154,6 +158,21 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 CORS_ALLOWED_ORIGINS = env("CORS_ALLOWED_ORIGINS")
+CORS_ALLOW_CREDENTIALS = True
+
+# Prometheus HTTP API (optional for KPI enrichment from metrics)
+PROMETHEUS_URL = env.str("PROMETHEUS_URL", default="")
+
+# JWT tuning
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
 
 LOGGING = {
     "version": 1,

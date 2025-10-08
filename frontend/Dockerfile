@@ -1,21 +1,18 @@
 FROM node:20-alpine AS deps
 WORKDIR /app
 COPY frontend/package.json ./
-RUN npm install --no-audit --no-fund
+RUN npm i --no-audit --no-fund
 
-FROM node:20-alpine AS builder
+FROM node:20-alpine AS build
 WORKDIR /app
-ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=deps /app/node_modules ./node_modules
 COPY frontend .
 RUN npm run build
 
 FROM node:20-alpine AS runtime
 WORKDIR /app
-ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=3000
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/package.json ./package.json
+ENV NODE_ENV=production PORT=3000
+RUN npm i -g serve@14.2.3 --no-audit --no-fund
+COPY --from=build /app/dist ./dist
 EXPOSE 3000
-CMD ["npm", "run", "start"]
+CMD ["serve", "-s", "dist", "-l", "3000"]

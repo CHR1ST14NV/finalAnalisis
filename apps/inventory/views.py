@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import status, views
 from rest_framework.permissions import IsAuthenticated
+from apps.users.permissions import HasRole
 from rest_framework.response import Response
 from apps.catalog.models import SKU
 from .models import Warehouse, Reservation
@@ -42,6 +43,10 @@ class ReservationView(views.APIView):
         ],
     )
     def post(self, request):
+        role_guard = HasRole()
+        role_guard.required_roles = ["admin", "operador_central", "operator"]
+        if not role_guard.has_permission(request, self):
+            return Response({"detail": "forbidden"}, status=status.HTTP_403_FORBIDDEN)
         s = CreateReservationSerializer(data=request.data)
         s.is_valid(raise_exception=True)
         sku = get_object_or_404(SKU, id=s.validated_data["sku_id"])

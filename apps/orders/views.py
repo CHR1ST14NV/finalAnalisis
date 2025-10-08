@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import status, views
 from rest_framework.permissions import IsAuthenticated
+from apps.users.permissions import HasRole
 from rest_framework.response import Response
 from apps.inventory.models import Warehouse
 from .models import Order
@@ -28,6 +29,11 @@ class OrderView(views.APIView):
         ],
     )
     def post(self, request):
+        # RBAC: solo roles de canal pueden crear
+        role_guard = HasRole()
+        role_guard.required_roles = ["admin", "operador_central", "operator", "distribuidor", "distributor", "minorista", "retailer"]
+        if not role_guard.has_permission(request, self):
+            return Response({"detail": "forbidden"}, status=status.HTTP_403_FORBIDDEN)
         s = OrderCreateSerializer(data=request.data)
         s.is_valid(raise_exception=True)
         wh = (
@@ -40,6 +46,12 @@ class OrderView(views.APIView):
             warehouse=wh,
         )
         return Response(OrderSerializer(order).data, status=status.HTTP_201_CREATED)
+
+    @extend_schema(responses=OrderSerializer)
+    def get(self, request):
+        qs = Order.objects.select_related("warehouse").order_by("-created_at")[:50]
+        data = [OrderSerializer(o).data for o in qs]
+        return Response(data)
 
 
 class OrderConfirmView(views.APIView):

@@ -1,0 +1,43 @@
+import { Route, Routes } from 'react-router-dom';
+import NavBar from './components/NavBar';
+import Home from './pages/Home';
+import Products from './pages/Products';
+import Orders from './pages/Orders';
+import Inventory from './pages/Inventory';
+import KPI from './pages/KPI';
+import Login from './pages/Login';
+
+export default function App() {
+  // Atajos: g p (productos), g o (pedidos), g k (kpi)
+  React.useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.target && (e.target as HTMLElement).tagName === 'INPUT') return;
+      if (e.key.toLowerCase() === 'g') {
+        const handler = (ev: KeyboardEvent) => {
+          const k = ev.key.toLowerCase();
+          if (k === 'p') location.href = '/products';
+          if (k === 'o') location.href = '/orders';
+          if (k === 'k') location.href = '/kpi';
+          window.removeEventListener('keydown', handler, { capture: true } as any);
+        };
+        window.addEventListener('keydown', handler, { capture: true } as any);
+      }
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  return (
+    <div>
+      <NavBar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/orders" element={<Orders />} />
+        <Route path="/inventory" element={<Inventory />} />
+        <Route path="/kpi" element={<KPI />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </div>
+  );
+}

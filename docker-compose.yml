@@ -64,9 +64,15 @@ services:
       - redis
     volumes:
       - .:/app
+      - media:/app/media
     expose:
       - "8000"
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8000/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   frontend:
     build:
@@ -79,6 +85,11 @@ services:
     expose:
       - "3000"
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000 > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   celery-worker:
     build:
@@ -155,9 +166,15 @@ services:
       - .:/app
     ports:
       - "3000:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/healthz > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   pgdata:
   redisdata:
   miniostore:
   grafana-storage:
+  media:
