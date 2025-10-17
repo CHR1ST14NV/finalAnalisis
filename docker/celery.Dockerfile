@@ -10,4 +10,4 @@ FROM base AS runtime
 WORKDIR /app
 COPY . /app
 RUN python -m compileall .
-CMD ["bash", "-lc", "bash scripts/wait_for_db.sh ${DB_HOST:-db} ${DB_USER:-chan} && python manage.py makemigrations --noinput && python manage.py migrate && celery -A chan_platform worker -l info"]
+CMD ["bash", "-lc", "bash scripts/wait_for_db.sh ${DB_HOST:-db} ${DB_USER:-chan} && python manage.py makemigrations --noinput && python manage.py migrate && opentelemetry-instrument celery -A chan_platform worker -l info"]

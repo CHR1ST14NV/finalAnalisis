@@ -69,6 +69,10 @@ class ReservationConfirmView(views.APIView):
 
     @extend_schema(examples=[OpenApiExample("Confirm", value={})])
     def post(self, request, pk):
+        role_guard = HasRole()
+        role_guard.required_roles = ["admin", "operador_central", "operator"]
+        if not role_guard.has_permission(request, self):
+            return Response({"detail": "forbidden"}, status=status.HTTP_403_FORBIDDEN)
         res = get_object_or_404(Reservation, id=pk)
         confirm_allocation(res)
         return Response(ReservationSerializer(res).data)

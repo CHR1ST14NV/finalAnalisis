@@ -106,7 +106,7 @@ services:
       - redis
     volumes:
       - .:/app
-    command: bash -lc "celery -A chan_platform worker -l info"
+    command: bash -lc "opentelemetry-instrument celery -A chan_platform worker -l info"
     restart: unless-stopped
 
   celery-beat:
@@ -124,7 +124,7 @@ services:
       - redis
     volumes:
       - .:/app
-    command: bash -lc "bash scripts/wait_for_db.sh ${DB_HOST:-db} ${DB_USER:-chan} && python manage.py makemigrations --noinput && python manage.py migrate && celery -A chan_platform beat -l info"
+    command: bash -lc "bash scripts/wait_for_db.sh ${DB_HOST:-db} ${DB_USER:-chan} && python manage.py makemigrations --noinput && python manage.py migrate && opentelemetry-instrument celery -A chan_platform beat -l info"
     restart: unless-stopped
 
   otel-collector:

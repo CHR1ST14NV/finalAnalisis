@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+// Simple in-memory + sessionStorage token store for JWT session
+// Uses sessionStorage to persist across refresh without writing long-lived tokens to disk
+const TOKENS_KEY = 'chan.tokens';
+
 const API_BASE = '/api/v1';
 
 export const jwtSchema = z.object({
@@ -12,9 +16,35 @@ export type JWT = z.infer<typeof jwtSchema>;
 let accessToken: string | null = null;
 let refreshToken: string | null = null;
 
+function loadTokens() {
+  try {
+    const raw = sessionStorage.getItem(TOKENS_KEY);
+    if (!raw) return;
+    const parsed = jwtSchema.partial().safeParse(JSON.parse(raw));
+    if (parsed.success) {
+      accessToken = parsed.data.access ?? null;
+      refreshToken = parsed.data.refresh ?? null;
+    }
+  } catch {
+    // ignore
+  }
+}
+
+function persistTokens() {
+  try {
+    const data: Partial<JWT> = {};
+    if (accessToken) data.access = accessToken;
+    if (refreshToken) data.refresh = refreshToken;
+    sessionStorage.setItem(TOKENS_KEY, JSON.stringify(data));
+  } catch {
+    // ignore
+  }
+}
+
 export function setTokens(tokens: Partial<JWT>) {
   if (tokens.access) accessToken = tokens.access;
   if (tokens.refresh) refreshToken = tokens.refresh;
+  persistTokens();
 }
 
 export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
@@ -35,12 +65,14 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
       const parsed = jwtSchema.partial().parse(data);
       if (parsed.access) {
         accessToken = parsed.access;
+        persistTokens();
         return api<T>(path, init);
       }
     }
     // failed refresh
     accessToken = null;
     refreshToken = null;
+    persistTokens();
     throw new Error('Unauthorized');
   }
   if (!res.ok) {
@@ -58,6 +90,22 @@ export async function login(username: string, password: string) {
   }).then((r) => r.json());
   const tokens = jwtSchema.parse(data);
   setTokens(tokens);
+}
+
+export function logout() {
+  accessToken = null;
+  refreshToken = null;
+  persistTokens();
+}
+
+export function isAuthenticated() {
+  if (!accessToken && !refreshToken) loadTokens();
+  return Boolean(accessToken || refreshToken);
+}
+
+function randomIdemKey() {
+  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) return (crypto as any).randomUUID();
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
 // Types
@@ -94,15 +142,21 @@ export async function createOrder(payload: {
   items: { sku_id: string; qty: number; unit_price: string }[];
   warehouse_id?: string;
 }) {
-  return api<Order>(`/orders/`, { method: 'POST', body: JSON.stringify(payload) });
+  return api<Order>(`/orders/`, {
+    method: 'POST',
+    headers: { 'Idempotency-Key': randomIdemKey() },
+    body: JSON.stringify(payload),
+  });
 }
 
 export async function confirmOrder(orderId: string) {
-  return api<{ status: string }>(`/orders/${orderId}/confirm/`, { method: 'POST' });
+  return api<{ status: string }>(`/orders/${orderId}/confirm/`, {
+    method: 'POST',
+    headers: { 'Idempotency-Key': randomIdemKey() },
+  });
 }
 
 export async function kpis(params: { start?: string; end?: string; warehouse?: string }) {
   const sp = new URLSearchParams(params as Record<string, string>);
   return api<Record<string, number | null>>(`/metrics/kpis/?${sp.toString()}`);
 }
-

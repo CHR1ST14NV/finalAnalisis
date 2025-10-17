@@ -62,6 +62,11 @@ class OrderConfirmView(views.APIView):
         responses={200: {"type": "object", "properties": {"status": {"type": "string"}}}},
     )
     def post(self, request, pk):
+        # RBAC: restrict to admin/operator roles
+        role_guard = HasRole()
+        role_guard.required_roles = ["admin", "operador_central", "operator"]
+        if not role_guard.has_permission(request, self):
+            return Response({"detail": "forbidden"}, status=status.HTTP_403_FORBIDDEN)
         order = get_object_or_404(Order, id=pk)
         # kick off async fulfillment saga
         process_order_fulfillment.delay(str(order.id))

@@ -1,6 +1,13 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { isAuthenticated, logout } from '../lib/api';
 
 export default function NavBar() {
+  const navigate = useNavigate();
+  const authed = isAuthenticated();
+  function onLogout() {
+    logout();
+    navigate('/login');
+  }
   return (
     <header className="site">
       <div className="container flex items-center justify-between py-3">
@@ -8,7 +15,7 @@ export default function NavBar() {
           <div className="h-2.5 w-2.5 rounded-full bg-ok" />
           <span className="font-semibold">Canal</span>
         </div>
-        <nav className="top flex gap-5 text-sm">
+        <nav className="top flex gap-5 text-sm items-center">
           <NavLink to="/" className={({ isActive }) => (isActive ? 'active' : '')} end>
             Inicio
           </NavLink>
@@ -24,12 +31,15 @@ export default function NavBar() {
           <NavLink to="/kpi" className={({ isActive }) => (isActive ? 'active' : '')}>
             KPI
           </NavLink>
-          <NavLink to="/login" className={({ isActive }) => (isActive ? 'active' : '')}>
-            Login
-          </NavLink>
+          {!authed ? (
+            <NavLink to="/login" className={({ isActive }) => (isActive ? 'active' : '')}>
+              Login
+            </NavLink>
+          ) : (
+            <button onClick={onLogout} className="text-neutral-300 hover:text-white">Salir</button>
+          )}
         </nav>
       </div>
     </header>
   );
 }
-
