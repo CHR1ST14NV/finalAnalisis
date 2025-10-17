@@ -113,6 +113,14 @@ export const productSchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string().optional(),
+  primary_sku_id: z.string().nullable().optional(),
+  price: z
+    .object({
+      currency: z.string(),
+      amount: z.string(),
+    })
+    .nullable()
+    .optional(),
 });
 export type Product = z.infer<typeof productSchema>;
 
@@ -154,6 +162,22 @@ export async function confirmOrder(orderId: string) {
     method: 'POST',
     headers: { 'Idempotency-Key': randomIdemKey() },
   });
+}
+
+// User / Profile
+export const roleSchema = z.object({ name: z.string(), description: z.string().optional() });
+export const userSchema = z.object({
+  id: z.string(),
+  username: z.string(),
+  email: z.string().nullable().optional(),
+  first_name: z.string().nullable().optional(),
+  last_name: z.string().nullable().optional(),
+  roles: z.array(roleSchema),
+});
+export type User = z.infer<typeof userSchema>;
+
+export async function me() {
+  return api<User>(`/auth/me/`);
 }
 
 export async function kpis(params: { start?: string; end?: string; warehouse?: string }) {

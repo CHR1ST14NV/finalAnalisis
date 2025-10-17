@@ -6,6 +6,11 @@
   --radius: 14px;
 }
 
+.gradient-bg {
+  background-image: radial-gradient(60% 60% at 10% -10%, rgba(34, 211, 238, 0.15), transparent),
+    radial-gradient(60% 60% at 90% 0%, rgba(59, 130, 246, 0.12), transparent);
+}
+
 .container {
   @apply max-w-7xl mx-auto px-4;
 }
@@ -35,3 +40,6 @@ header.site {
 nav.top a { @apply text-neutral-300 hover:text-white transition-colors; }
 nav.top a.active { @apply text-white; }
 
+/* Modal helpers */
+.modal-overlay { @apply fixed inset-0 bg-black/50; }
+.modal-panel { @apply rounded-xl bg-neutral-950 border border-neutral-800 shadow-xl; }

@@ -13,7 +13,7 @@ export default function NavBar() {
       <div className="container flex items-center justify-between py-3">
         <div className="flex items-center gap-3">
           <div className="h-2.5 w-2.5 rounded-full bg-ok" />
-          <span className="font-semibold">Canal</span>
+          <span className="font-semibold tracking-tight">Canal</span>
         </div>
         <nav className="top flex gap-5 text-sm items-center">
           <NavLink to="/" className={({ isActive }) => (isActive ? 'active' : '')} end>
@@ -36,7 +36,12 @@ export default function NavBar() {
               Login
             </NavLink>
           ) : (
-            <button onClick={onLogout} className="text-neutral-300 hover:text-white">Salir</button>
+            <>
+              <NavLink to="/profile" className={({ isActive }) => (isActive ? 'active' : '')}>
+                Perfil
+              </NavLink>
+              <button onClick={onLogout} className="text-neutral-300 hover:text-white">Salir</button>
+            </>
           )}
         </nav>
       </div>

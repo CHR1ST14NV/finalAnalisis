@@ -8,6 +8,8 @@ import Orders from './pages/Orders';
 import Inventory from './pages/Inventory';
 import KPI from './pages/KPI';
 import Login from './pages/Login';
+import Profile from './pages/Profile';
+import NotFound from './pages/NotFound';
 
 export default function App() {
   // Atajos: g p (productos), g o (pedidos), g k (kpi)
@@ -39,6 +41,8 @@ export default function App() {
         <Route path="/inventory" element={<RequireAuth><Inventory /></RequireAuth>} />
         <Route path="/kpi" element={<RequireAuth><KPI /></RequireAuth>} />
         <Route path="/login" element={<Login />} />
+        <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
   );
