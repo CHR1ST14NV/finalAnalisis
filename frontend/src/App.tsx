@@ -9,6 +9,7 @@ import Inventory from './pages/Inventory';
 import KPI from './pages/KPI';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
+import Register from './pages/Register';
 import NotFound from './pages/NotFound';
 
 export default function App() {
@@ -41,6 +42,7 @@ export default function App() {
         <Route path="/inventory" element={<RequireAuth><Inventory /></RequireAuth>} />
         <Route path="/kpi" element={<RequireAuth><KPI /></RequireAuth>} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
         <Route path="*" element={<NotFound />} />
       </Routes>

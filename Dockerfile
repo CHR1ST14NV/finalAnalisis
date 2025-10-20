@@ -7,5 +7,6 @@ RUN apt-get update \
 WORKDIR /app
 COPY requirements.txt /app/
 RUN pip install --upgrade pip && pip install -r requirements.txt
+# Django creates migrations at runtime; ensure django is importable
 COPY . /app
 EXPOSE 8000

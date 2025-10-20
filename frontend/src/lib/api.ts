@@ -4,7 +4,7 @@ import { z } from 'zod';
 // Uses sessionStorage to persist across refresh without writing long-lived tokens to disk
 const TOKENS_KEY = 'chan.tokens';
 
-const API_BASE = '/api/v1';
+const API_BASE = '/api';
 
 export const jwtSchema = z.object({
   access: z.string(),
@@ -183,4 +183,19 @@ export async function me() {
 export async function kpis(params: { start?: string; end?: string; warehouse?: string }) {
   const sp = new URLSearchParams(params as Record<string, string>);
   return api<Record<string, number | null>>(`/metrics/kpis/?${sp.toString()}`);
+}
+
+// Registration and roles
+export type Role = { id: number; code: string; name: string };
+export async function fetchRoles(): Promise<Role[]> {
+  return fetch(`${API_BASE}/auth/roles`).then((r) => r.json());
+}
+export async function registerUser(payload: { username: string; email: string; password: string; role_code: string }) {
+  const res = await fetch(`${API_BASE}/auth/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
 }

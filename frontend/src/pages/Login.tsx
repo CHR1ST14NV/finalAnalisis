@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { login } from '../lib/api';
 import { Input, Button, Label } from '../components/Form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -38,10 +38,12 @@ export default function Login() {
             <Input type="password" value={password} onChange={(e) => setPassword(e.currentTarget.value)} required />
           </div>
           {error && <p className="text-rose-400 text-sm">{error}</p>}
-          <Button type="submit" disabled={loading}>{loading ? 'Ingresando…' : 'Entrar'}</Button>
+          <div className="flex items-center gap-3">
+            <Button type="submit" disabled={loading}>{loading ? 'Ingresando…' : 'Entrar'}</Button>
+            <Link to="/register" className="text-sm text-neutral-300 hover:text-white">Crear cuenta</Link>
+          </div>
         </form>
       </div>
     </div>
   );
 }
-
