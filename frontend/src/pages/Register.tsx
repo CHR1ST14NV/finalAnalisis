@@ -14,11 +14,22 @@ export default function Register() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchRoles().then((r) => {
-      setRoles(r);
-      if (r.length && !role) setRole(r[0].code);
-    });
-  }, []);
+    let mounted = true;
+    (async () => {
+      try {
+        const rs = await fetchRoles();
+        if (!mounted) return;
+        setRoles(rs);
+        if (rs && rs.length > 0 && !role) {
+          const first = rs[0];
+          if (first) setRole(first.code);
+        }
+      } catch {
+        // ignore
+      }
+    })();
+    return () => { mounted = false; };
+  }, [role]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -66,4 +77,3 @@ export default function Register() {
     </div>
   );
 }
-

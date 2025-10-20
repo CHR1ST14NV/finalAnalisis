@@ -55,7 +55,7 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, { ...init, headers });
   if (res.status === 401 && refreshToken) {
     // try refresh
-    const r = await fetch(`${API_BASE}/auth/token/refresh/`, {
+    const r = await fetch(`${API_BASE}/auth/jwt/refresh`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ refresh: refreshToken }),
@@ -83,7 +83,7 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
 }
 
 export async function login(username: string, password: string) {
-  const data = await fetch(`${API_BASE}/auth/token/`, {
+  const data = await fetch(`${API_BASE}/auth/jwt/create`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, password }),
