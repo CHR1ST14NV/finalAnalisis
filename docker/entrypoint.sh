@@ -5,6 +5,7 @@ DB_HOST=${DB_HOST:-mysql}
 DB_PORT=${DB_PORT:-3306}
 DB_USER=${DB_USER:-root}
 DB_PASSWORD=${DB_PASSWORD:-admin}
+export MYSQL_PWD="$DB_PASSWORD"
 
 # Espera por socket TCP primero (más robusto si mysqladmin falla)
 until nc -z "$DB_HOST" "$DB_PORT" >/dev/null 2>&1; do
@@ -12,18 +13,23 @@ until nc -z "$DB_HOST" "$DB_PORT" >/dev/null 2>&1; do
   sleep 2
 done
 
-# Verifica credenciales cuando el puerto está abierto
-for i in {1..20}; do
-  if mysqladmin ping -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -p"$DB_PASSWORD" --silent; then
-    break
+# Verifica credenciales realizando un SELECT 1 sin TLS verificado
+ok=0
+for i in {1..40}; do
+  if mysql --protocol=tcp -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -e "SELECT 1" >/dev/null 2>&1; then
+    ok=1; break
   fi
   echo "Esperando MySQL (auth)..."
   sleep 2
 done
+if [ "$ok" != "1" ]; then
+  echo "MySQL no respondió a autenticación tras varios intentos" >&2
+  exit 1
+fi
 echo "MySQL está listo"
 # Crea la base si no existe (útil cuando el volumen ya existía)
 DB_NAME_CREATE=${MYSQL_DB:-${DB_NAME:-final_analisis}}
-mysql -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -p"$DB_PASSWORD" -e "CREATE DATABASE IF NOT EXISTS \`${DB_NAME_CREATE}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" || true
+mysql --protocol=tcp -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -e "CREATE DATABASE IF NOT EXISTS \`${DB_NAME_CREATE}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" || true
 python manage.py makemigrations --noinput || true
 python manage.py migrate --noinput
 python manage.py collectstatic --noinput || true

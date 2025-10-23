@@ -41,11 +41,31 @@ SPECTACULAR_SETTINGS = {'TITLE':'finalAnalisis API','DESCRIPTION':'API con MySQL
 
 ROOT_URLCONF = 'core.urls'
 
-_host = os.getenv('MYSQL_HOST', os.getenv('DB_HOST','mysql'))
-_port = os.getenv('MYSQL_PORT', os.getenv('DB_PORT','3306'))
-if _host in ('127.0.0.1','localhost'):
-    # Si corre en Docker, usa el hostname del servicio
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / 'templates'],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    }
+]
+
+_host_env = os.getenv('MYSQL_HOST', os.getenv('DB_HOST','mysql'))
+_port_env = os.getenv('MYSQL_PORT', os.getenv('DB_PORT','3306'))
+if _host_env in ('127.0.0.1','localhost'):
+    # Dentro del contenedor usamos la red de Docker
     _host = os.getenv('MYSQL_HOST_DOCKER','mysql')
+    _port = os.getenv('MYSQL_PORT_DOCKER','3306')
+else:
+    _host = _host_env
+    _port = _port_env
 
 DATABASES = {
     'default': {
