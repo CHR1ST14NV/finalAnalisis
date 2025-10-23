@@ -1,6 +1,6 @@
-﻿# finalAnalisis – MySQL + Docker
+# finalAnalisis – Stack Docker + Django + MySQL
 
-Este proyecto está configurado para usar MySQL con Docker, con persistencia real y sin Postgres.
+Proyecto listo para levantar con un solo comando usando MySQL dentro del mismo `docker compose`. La app espera a la base, migra y arranca automáticamente.
 
 ## Levantar servicios
 
@@ -8,66 +8,73 @@ Este proyecto está configurado para usar MySQL con Docker, con persistencia rea
 docker compose up -d --build
 ```
 
-- API: http://localhost:8000
-- MySQL: 127.0.0.1:3309 (root/admin)
-- Adminer: http://localhost:8080 (Servidor: `mysql`, Usuario: `root`, Contraseña: `admin`, DB: `app_db`)
+- API directa (Django): http://localhost:8001/
+- API vía Nginx: http://localhost:3000/api/
+- Frontend (Nginx → Vite static): http://localhost:3000/
+- MySQL (host): 127.0.0.1:3309 (usuario: `root`, pass: `admin`)
+- Adminer: http://localhost:8080/ (Servidor: `mysql`, Usuario: `root`, Pass: `admin`, DB: `final_analisis`)
 
-Al iniciar, el contenedor `web` espera a MySQL, corre migraciones y levanta `runserver` en 0.0.0.0:8000. Si defines las variables de superusuario en `.env`, se crea automáticamente.
+El servicio `web` espera a MySQL, crea la base si no existe, corre migraciones, carga estáticos y arranca en `0.0.0.0:8000`. El healthcheck expone `GET /healthz` dentro del contenedor y es usado por Compose.
 
 ## Variables de entorno (.env)
+
+Se incluye `.env.example` con valores por defecto. Copia como `.env` si lo necesitas.
+
+Claves relevantes:
 
 ```
 DJANGO_DEBUG=True
 DJANGO_SECRET_KEY=change-me-please
 DJANGO_ALLOWED_HOSTS=*
 TIME_ZONE=America/Guatemala
+LANGUAGE_CODE=es
 
-DB_ENGINE=mysql
-DB_NAME=app_db
-DB_USER=root
-DB_PASSWORD=admin
-DB_HOST=mysql
-DB_PORT=3306
+# Acceso desde tu host (puerto publicado por compose)
+MYSQL_HOST=127.0.0.1
+MYSQL_PORT=3309
+MYSQL_DB=final_analisis
+MYSQL_USER=root
+MYSQL_PASSWORD=admin
 
-DJANGO_SUPERUSER_EMAIL=admin@example.com
+# Acceso dentro de la red de Docker (lo usa el contenedor web)
+MYSQL_HOST_DOCKER=mysql
+MYSQL_PORT_DOCKER=3306
+
+# Crear superusuario automáticamente (opcional)
+DJANGO_SUPERUSER_EMAIL=admin@local
 DJANGO_SUPERUSER_USERNAME=admin
-DJANGO_SUPERUSER_PASSWORD=admin123
+DJANGO_SUPERUSER_PASSWORD=admin12345
+
+ENV=dev
 ```
 
-## Probar la base de datos
+La configuración de Django detecta si `MYSQL_HOST` es `127.0.0.1` o `localhost` y en ese caso usa automáticamente `MYSQL_HOST_DOCKER=mysql` al correr dentro del contenedor.
 
-- CLI MySQL desde host:
+## Probar la base de datos (desde tu host)
 
 ```
 mysql -h 127.0.0.1 -P 3309 -uroot -padmin -e "SHOW DATABASES;"
 ```
 
-- IP interna del contenedor MySQL:
+## Usar MySQL local en vez del contenedor (opcional)
+
+En `.env` coloca:
 
 ```
-docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' mysql
+MYSQL_HOST=host.docker.internal
+MYSQL_PORT=3306
 ```
 
-## Usar MySQL local (XAMPP/WAMP)
-
-Si prefieres usar tu MySQL local en `localhost:3306 (root/admin)`, ajusta `.env`:
+En Linux agrega al servicio `web` de `docker-compose.yml`:
 
 ```
-DB_HOST=host.docker.internal
-DB_PORT=3306
+extra_hosts:
+  - "host.docker.internal:host-gateway"
 ```
 
-(En Linux agrega al servicio `web` en docker-compose: `extra_hosts: - "host.docker.internal:host-gateway"`).
+## Notas
 
-## API de ejemplo
+- No se requiere Postgres. El backend es `django.db.backends.mysql` y `requirements.txt` incluye `mysqlclient`.
+- Se añadió healthcheck al servicio web y `curl` en la imagen para mayor confiabilidad en arranque.
+- Hay archivos de otra plataforma (`chan_platform`, k8s, etc.) que no se usan en este stack con MySQL; puedes ignorarlos o removerlos si deseas simplificar aún más.
 
-- JWT: `POST /api/token/` (username/password) y `POST /api/token/refresh/`
-- Índice protegido: `GET /` (requiere Authorization: Bearer)
-- CRUD protegido por propietario: `GET/POST /api/notes/`, `GET/PUT/PATCH/DELETE /api/notes/{id}/`
-- OpenAPI: `GET /api/schema/` y Swagger UI: `GET /api/docs/`
-
-## Sin Postgres
-
-- Compose no incluye servicios de Postgres.
-- `requirements.txt` sin `psycopg2`.
-- Configuración Django con backend `django.db.backends.mysql`.

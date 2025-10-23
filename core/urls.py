@@ -7,6 +7,9 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 from accounts.urls import urlpatterns as accounts_urls
 from .api import urlpatterns as api_urls
+from .api_custom import ProductsView, OrdersView, OrderConfirmView
+from .api_custom import KPIsView
+from healthz import healthz
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -15,6 +18,7 @@ def index(request):
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('healthz', healthz, name='healthz'),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema')),
     path('api/auth/jwt/create', TokenObtainPairView.as_view(), name='jwt_create'),
@@ -23,5 +27,10 @@ urlpatterns = [
     path('api/', include('rest_framework.urls')),
     path('api/', include(api_urls)),
     path('api/auth/', include(accounts_urls)),
+    # Frontend-expected endpoints
+    path('api/catalog/products/', ProductsView.as_view(), name='catalog-products'),
+    path('api/orders/', OrdersView.as_view(), name='orders'),
+    path('api/orders/<int:pk>/confirm/', OrderConfirmView.as_view(), name='order-confirm'),
+    path('api/metrics/kpis/', KPIsView.as_view(), name='kpis'),
     path('', index, name='index'),
 ]

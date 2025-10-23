@@ -1,39 +1,22 @@
-# Ignore VCS and editor junk
-.git
-.git/**
-.github
-.DS_Store
-*.swp
-*.swo
-
-# Python caches
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
+*.sqlite3
+.venv/
+env/
+venv/
 .pytest_cache/
 .mypy_cache/
-.venv/
-venv/
-
-# Node/Frontend build artifacts
+.ruff_cache/
+.coverage
+coverage.xml
+dist/
+build/
+staticfiles/
+media/
 node_modules/
 frontend/node_modules/
 frontend/dist/
-dist/
-build/
-
-# Local env and runtime files
-.env
-celerybeat-schedule
-
-# Backups and large dumps (cause BuildKit context issues)
 backups/
-**/*.sql
-**/*.sql.gz
-**/*.dump
-**/*.tar
-**/*.zip
-
-# IDE
-.idea/
-.vscode/
+*.log
+*.DS_Store
+.env

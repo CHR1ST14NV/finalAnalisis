@@ -2,7 +2,7 @@ import React from 'react';
 
 export function Table({ children, ...rest }: React.TableHTMLAttributes<HTMLTableElement>) {
   return (
-    <table className="table" {...rest}>
+    <table className="table table-dark table-striped table-hover table-sm align-middle" {...rest}>
       {children}
     </table>
   );
@@ -10,7 +10,7 @@ export function Table({ children, ...rest }: React.TableHTMLAttributes<HTMLTable
 
 export function Th({ children, ...rest }: React.ThHTMLAttributes<HTMLTableHeaderCellElement>) {
   return (
-    <th className="px-2 py-2 text-left text-neutral-300 border-b border-neutral-800" {...rest}>
+    <th className="text-start" {...rest}>
       {children}
     </th>
   );
@@ -18,7 +18,7 @@ export function Th({ children, ...rest }: React.ThHTMLAttributes<HTMLTableHeader
 
 export function Td({ children, ...rest }: React.TdHTMLAttributes<HTMLTableCellElement>) {
   return (
-    <td className="px-2 py-2 border-b border-neutral-900" {...rest}>
+    <td {...rest}>
       {children}
     </td>
   );

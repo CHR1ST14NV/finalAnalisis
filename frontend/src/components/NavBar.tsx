@@ -9,42 +9,32 @@ export default function NavBar() {
     navigate('/login');
   }
   return (
-    <header className="site">
-      <div className="container flex items-center justify-between py-3">
-        <div className="flex items-center gap-3">
-          <div className="h-2.5 w-2.5 rounded-full bg-ok" />
-          <span className="font-semibold tracking-tight">Canal</span>
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div className="container">
+        <NavLink to="/" className="navbar-brand">Canal</NavLink>
+        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsMain">
+          <span className="navbar-toggler-icon"></span>
+        </button>
+        <div id="navbarsMain" className="collapse navbar-collapse">
+          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+            <li className="nav-item"><NavLink to="/" end className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}>Inicio</NavLink></li>
+            <li className="nav-item"><NavLink to="/products" className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}>Catálogo</NavLink></li>
+            <li className="nav-item"><NavLink to="/orders" className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}>Pedidos</NavLink></li>
+            <li className="nav-item"><NavLink to="/inventory" className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}>Inventario</NavLink></li>
+            <li className="nav-item"><NavLink to="/kpi" className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}>KPI</NavLink></li>
+          </ul>
+          <ul className="navbar-nav ms-auto">
+            {!authed ? (
+              <li className="nav-item"><NavLink to="/login" className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}>Login</NavLink></li>
+            ) : (
+              <>
+                <li className="nav-item"><NavLink to="/profile" className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}>Perfil</NavLink></li>
+                <li className="nav-item"><button onClick={onLogout} className="btn btn-outline-light btn-sm ms-2">Salir</button></li>
+              </>
+            )}
+          </ul>
         </div>
-        <nav className="top flex gap-5 text-sm items-center">
-          <NavLink to="/" className={({ isActive }) => (isActive ? 'active' : '')} end>
-            Inicio
-          </NavLink>
-          <NavLink to="/products" className={({ isActive }) => (isActive ? 'active' : '')}>
-            Catálogo
-          </NavLink>
-          <NavLink to="/orders" className={({ isActive }) => (isActive ? 'active' : '')}>
-            Pedidos
-          </NavLink>
-          <NavLink to="/inventory" className={({ isActive }) => (isActive ? 'active' : '')}>
-            Inventario
-          </NavLink>
-          <NavLink to="/kpi" className={({ isActive }) => (isActive ? 'active' : '')}>
-            KPI
-          </NavLink>
-          {!authed ? (
-            <NavLink to="/login" className={({ isActive }) => (isActive ? 'active' : '')}>
-              Login
-            </NavLink>
-          ) : (
-            <>
-              <NavLink to="/profile" className={({ isActive }) => (isActive ? 'active' : '')}>
-                Perfil
-              </NavLink>
-              <button onClick={onLogout} className="text-neutral-300 hover:text-white">Salir</button>
-            </>
-          )}
-        </nav>
       </div>
-    </header>
+    </nav>
   );
 }

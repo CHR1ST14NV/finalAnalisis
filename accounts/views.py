@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import status
 from .serializers import RegisterSerializer, RoleSerializer
 from .models import Role
@@ -23,3 +23,18 @@ class RoleListView(APIView):
         data = RoleSerializer(Role.objects.all(), many=True).data
         return Response(data)
 
+
+class MeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        u = request.user
+        roles = list(u.roles.values('id', 'code', 'name')) if hasattr(u, 'roles') else []
+        return Response({
+            'id': str(u.id),
+            'username': u.username,
+            'email': getattr(u, 'email', None),
+            'first_name': getattr(u, 'first_name', ''),
+            'last_name': getattr(u, 'last_name', ''),
+            'roles': roles,
+        })
