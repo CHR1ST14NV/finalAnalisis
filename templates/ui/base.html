@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UI</title>
+  <style>
+    :root{--bg:#0a0a0a;--fg:#f5f5f5;--muted:#9ca3af;--card:#0f0f10;--border:#242424;--link:#7dd3fc;--ok:#22c55e;--err:#ef4444}
+    body{margin:0;background:radial-gradient(1200px 600px at 20% -10%, #111 0, transparent 60%), var(--bg);color:var(--fg);font:14px system-ui,Segoe UI,Roboto,Helvetica,Arial}
+    a{color:var(--link);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .container{max-width:1100px;margin:0 auto;padding:16px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:0 1px 0 #000 inset,0 0 0 1px #0003}
+    .muted{color:var(--muted)}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:#1a1a1a;color:var(--fg);cursor:pointer}
+    .btn:hover{background:#222}
+    .btn.ghost{background:transparent}
+    .btn.ok{border-color:#1f8c44}
+    .btn.err{border-color:#b91c1c}
+    table{width:100%;border-collapse:collapse}
+    th,td{border-bottom:1px solid var(--border);padding:10px 8px;text-align:left}
+    thead th{font-weight:600;color:#d1d5db}
+    tbody tr:hover{background:#0c0c0d}
+    input,select{width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:#0f0f0f;color:var(--fg)}
+    nav{background:#111;border-bottom:1px solid var(--border)}
+    nav .container{display:flex;gap:16px;align-items:center}
+    nav a.brand{font-weight:700;letter-spacing:.3px}
+    .grid{display:grid;gap:12px}
+    .alert{border:1px solid #2a2a2a;background:#121212;border-radius:10px;padding:12px;margin:12px 0}
+    .alert.ok{border-color:#1f8c44}
+    .alert.err{border-color:#b91c1c}
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container">
+      <a class="brand" href="/ui/">UI CRUD</a>
+      <a href="/">Frontend</a>
+      <a href="/admin/">Admin</a>
+      <a href="/api/docs/">Docs</a>
+    </div>
+  </nav>
+  <div class="container">
+    {% if messages %}
+      {% for m in messages %}
+        <div class="alert {{ 'ok' if m.tags == 'success' else 'err' if 'error' in m.tags else '' }}">{{ m }}</div>
+      {% endfor %}
+    {% endif %}
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

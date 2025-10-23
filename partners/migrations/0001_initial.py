@@ -1,4 +1,5 @@
 from django.db import migrations, models
+import django.db.models.deletion
 from django.conf import settings
 
 
@@ -6,7 +7,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        (settings.AUTH_USER_MODEL.split('.')[0], '0001_initial'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
@@ -18,8 +19,8 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('code', models.CharField(max_length=32, unique=True)),
                 ('name', models.CharField(max_length=120)),
-                ('created_by', models.ForeignKey(blank=True, null=True, on_delete=models.deletion.SET_NULL, related_name='created_distributors', to=settings.AUTH_USER_MODEL)),
-                ('updated_by', models.ForeignKey(blank=True, null=True, on_delete=models.deletion.SET_NULL, related_name='updated_distributors', to=settings.AUTH_USER_MODEL)),
+                ('created_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='created_distributors', to=settings.AUTH_USER_MODEL)),
+                ('updated_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='updated_distributors', to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(
@@ -30,9 +31,9 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('code', models.CharField(max_length=32, unique=True)),
                 ('name', models.CharField(max_length=120)),
-                ('created_by', models.ForeignKey(blank=True, null=True, on_delete=models.deletion.SET_NULL, related_name='created_retailers', to=settings.AUTH_USER_MODEL)),
-                ('updated_by', models.ForeignKey(blank=True, null=True, on_delete=models.deletion.SET_NULL, related_name='updated_retailers', to=settings.AUTH_USER_MODEL)),
-                ('distributor', models.ForeignKey(on_delete=models.deletion.PROTECT, related_name='retailers', to='partners.distributor')),
+                ('created_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='created_retailers', to=settings.AUTH_USER_MODEL)),
+                ('updated_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='updated_retailers', to=settings.AUTH_USER_MODEL)),
+                ('distributor', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='retailers', to='partners.distributor')),
             ],
         ),
     ]

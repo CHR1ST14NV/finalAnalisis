@@ -11,10 +11,11 @@ docker compose up -d --build
 - API directa (Django): http://localhost:8001/
 - API vía Nginx: http://localhost:3000/api/
 - Frontend (Nginx → Vite static): http://localhost:3000/
+- UI CRUD (server-side): http://localhost:3000/ui/
 - MySQL (host): 127.0.0.1:3309 (usuario: `root`, pass: `admin`)
 - Adminer: http://localhost:8080/ (Servidor: `mysql`, Usuario: `root`, Pass: `admin`, DB: `final_analisis`)
 
-El servicio `web` espera a MySQL, crea la base si no existe, corre migraciones, carga estáticos y arranca en `0.0.0.0:8000`. El healthcheck expone `GET /healthz` dentro del contenedor y es usado por Compose.
+El servicio `web` espera a MySQL, crea la base si no existe, GENERA migraciones que falten (makemigrations), migra con `--fake-initial` para respetar tablas ya existentes en tu MySQL, carga estáticos y arranca en `0.0.0.0:8000`. El healthcheck expone `GET /healthz` dentro del contenedor y es usado por Compose.
 
 ## Variables de entorno (.env)
 
@@ -50,6 +51,12 @@ ENV=dev
 
 La configuración de Django detecta si `MYSQL_HOST` es `127.0.0.1` o `localhost` y en ese caso usa automáticamente `MYSQL_HOST_DOCKER=mysql` al correr dentro del contenedor.
 
+Notas sobre migraciones y tu base existente:
+
+- Si tu volumen de MySQL ya contiene el esquema y datos (como tu `sql.sql`), el paso `migrate --fake-initial` marcará los migrations iniciales como aplicados sin tocar las tablas.
+- Si faltaran archivos de migración en el repo para alguna app, el entrypoint ejecuta `makemigrations` antes de migrar, generándolos automáticamente y manteniéndolos en el volumen del proyecto.
+- Esto te permite clonar y levantar con un solo comando sin “truenes”, conservando la base ya poblada en Docker.
+
 ## Probar la base de datos (desde tu host)
 
 ```
@@ -77,4 +84,3 @@ extra_hosts:
 - No se requiere Postgres. El backend es `django.db.backends.mysql` y `requirements.txt` incluye `mysqlclient`.
 - Se añadió healthcheck al servicio web y `curl` en la imagen para mayor confiabilidad en arranque.
 - Hay archivos de otra plataforma (`chan_platform`, k8s, etc.) que no se usan en este stack con MySQL; puedes ignorarlos o removerlos si deseas simplificar aún más.
-

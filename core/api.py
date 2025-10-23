@@ -42,6 +42,16 @@ def build_modelviewset(model):
                     return qs.filter(retailer_id=u.retailer_id)
                 if u.has_role('DISTRIBUTOR') and getattr(u, 'distributor_id', None):
                     return qs.filter(retailer__distributor_id=u.distributor_id)
+        # performance: auto select_related/prefetch for relations
+        try:
+            fk_fields = [f.name for f in _model._meta.get_fields() if getattr(f, 'many_to_one', False) and f.concrete]
+            m2m_fields = [f.name for f in _model._meta.get_fields() if getattr(f, 'many_to_many', False) and f.concrete]
+            if fk_fields:
+                qs = qs.select_related(*fk_fields)
+            if m2m_fields:
+                qs = qs.prefetch_related(*m2m_fields)
+        except Exception:
+            pass
         return qs
 
     attrs = {

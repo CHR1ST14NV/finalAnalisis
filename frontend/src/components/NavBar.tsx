@@ -28,6 +28,8 @@ export default function NavBar() {
               <li className="nav-item"><NavLink to="/login" className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}>Login</NavLink></li>
             ) : (
               <>
+                <li className="nav-item"><a href="/admin/" className="nav-link" target="_self" rel="noreferrer">Admin</a></li>
+                <li className="nav-item"><a href="/ui/" className="nav-link" target="_self" rel="noreferrer">UI</a></li>
                 <li className="nav-item"><NavLink to="/profile" className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}>Perfil</NavLink></li>
                 <li className="nav-item"><button onClick={onLogout} className="btn btn-outline-light btn-sm ms-2">Salir</button></li>
               </>

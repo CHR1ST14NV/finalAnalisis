@@ -57,12 +57,19 @@ services:
     depends_on:
       - web
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL","wget -qO- http://localhost:3000/ >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
 
   nginx:
     image: nginx:1.27-alpine
     depends_on:
-      - web
-      - frontend
+      web:
+        condition: service_healthy
+      frontend:
+        condition: service_healthy
     ports:
       - "3000:3000"
     volumes:

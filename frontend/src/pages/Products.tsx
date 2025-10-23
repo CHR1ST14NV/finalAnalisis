@@ -1,13 +1,30 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Input, Button } from '../components/Form';
+﻿import { useEffect, useMemo, useState } from 'react';
+import { Input, Button, Label } from '../components/Form';
 import { Table, Th, Td } from '../components/Table';
-import { fetchProducts, type Product } from '../lib/api';
+import {
+  fetchProducts,
+  type Product,
+  listBrands,
+  listCategories,
+  createProductApi,
+  updateProductApi,
+  deleteProductApi,
+  type Brand,
+  type Category,
+} from '../lib/api';
+import { Modal } from '../components/Modal';
 
 export default function Products() {
   const [q, setQ] = useState('');
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<{ results: Product[]; count: number }>({ results: [], count: 0 });
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [cats, setCats] = useState<Category[]>([]);
+  const [showNew, setShowNew] = useState(false);
+  const [showEdit, setShowEdit] = useState<null | { id: number; name: string; brand?: number | null; category?: number | null }>(null);
+  const [form, setForm] = useState<{ name: string; brand?: number | null; category?: number | null }>({ name: '' });
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -15,25 +32,73 @@ export default function Products() {
     fetchProducts({ page, q })
       .then((d) => !cancelled && setData(d))
       .finally(() => setLoading(false));
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [page, q]);
 
+  useEffect(() => {
+    (async () => {
+      try {
+        const [b, c] = await Promise.all([listBrands(), listCategories()]);
+        setBrands(b);
+        setCats(c);
+      } catch {
+        // ignore
+      }
+    })();
+  }, []);
+
   const totalPages = useMemo(() => Math.max(1, Math.ceil(data.count / 20)), [data.count]);
+
+  function resetForm() {
+    setForm({ name: '', brand: brands[0]?.id ?? undefined, category: cats[0]?.id ?? undefined });
+  }
+
+  async function submitNew() {
+    try {
+      setSaving(true);
+      await createProductApi(form);
+      setShowNew(false);
+      setPage(1);
+      const d = await fetchProducts({ page: 1, q });
+      setData(d);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function submitEdit() {
+    if (!showEdit) return;
+    try {
+      setSaving(true);
+      await updateProductApi(showEdit.id, form);
+      setShowEdit(null);
+      const d = await fetchProducts({ page, q });
+      setData(d);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function onDelete(id: number) {
+    if (!confirm('¿Eliminar producto?')) return;
+    await deleteProductApi(id);
+    const d = await fetchProducts({ page, q });
+    setData(d);
+  }
 
   return (
     <div className="container py-6 space-y-4">
       <div className="flex items-center gap-2">
         <Input placeholder="Buscar…" value={q} onChange={(e) => setQ(e.currentTarget.value)} />
         <Button onClick={() => setPage(1)}>Filtrar</Button>
+        <Button onClick={() => { resetForm(); setShowNew(true); }}>Nuevo</Button>
       </div>
       <div className="card">
         <Table>
           <thead>
             <tr>
               <Th>Producto</Th>
-              <Th>Descripción</Th>
+              <Th>Acciones</Th>
             </tr>
           </thead>
           <tbody>
@@ -45,7 +110,13 @@ export default function Products() {
             {!loading && data.results.map((p) => (
               <tr key={p.id}>
                 <Td>{p.name}</Td>
-                <Td className="muted">{p.description || '—'}</Td>
+                <Td className="text-right">
+                  <Button variant="ghost" onClick={() => {
+                    setForm({ name: p.name });
+                    setShowEdit({ id: Number(p.id), name: p.name });
+                  }}>Editar</Button>
+                  <Button variant="ghost" onClick={() => onDelete(Number(p.id))}>Eliminar</Button>
+                </Td>
               </tr>
             ))}
           </tbody>
@@ -59,7 +130,64 @@ export default function Products() {
           </div>
         </div>
       </div>
+
+      {/* New */}
+      <Modal open={showNew} onOpenChange={(v) => setShowNew(v)} title="Nuevo producto" footer={
+        <>
+          <Button variant="ghost" onClick={() => setShowNew(false)}>Cancelar</Button>
+          <Button onClick={submitNew} disabled={saving}>{saving ? 'Guardando…' : 'Guardar'}</Button>
+        </>
+      }>
+        <div className="grid sm:grid-cols-2 gap-3">
+          <div>
+            <Label>Nombre</Label>
+            <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.currentTarget.value }))} />
+          </div>
+          <div>
+            <Label>Marca</Label>
+            <select className="w-full rounded-lg bg-bg-muted border border-neutral-800 px-3 py-2" value={form.brand ?? ''} onChange={(e) => setForm((f) => ({ ...f, brand: Number(e.currentTarget.value) || undefined }))}>
+              <option value="">—</option>
+              {brands.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
+            </select>
+          </div>
+          <div>
+            <Label>Categoría</Label>
+            <select className="w-full rounded-lg bg-bg-muted border border-neutral-800 px-3 py-2" value={form.category ?? ''} onChange={(e) => setForm((f) => ({ ...f, category: Number(e.currentTarget.value) || undefined }))}>
+              <option value="">—</option>
+              {cats.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+            </select>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Edit */}
+      <Modal open={!!showEdit} onOpenChange={(v) => setShowEdit(v ? showEdit : null)} title="Editar producto" footer={
+        <>
+          <Button variant="ghost" onClick={() => setShowEdit(null)}>Cancelar</Button>
+          <Button onClick={submitEdit} disabled={saving}>{saving ? 'Guardando…' : 'Guardar'}</Button>
+        </>
+      }>
+        <div className="grid sm:grid-cols-2 gap-3">
+          <div>
+            <Label>Nombre</Label>
+            <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.currentTarget.value }))} />
+          </div>
+          <div>
+            <Label>Marca</Label>
+            <select className="w-full rounded-lg bg-bg-muted border border-neutral-800 px-3 py-2" value={form.brand ?? ''} onChange={(e) => setForm((f) => ({ ...f, brand: Number(e.currentTarget.value) || undefined }))}>
+              <option value="">—</option>
+              {brands.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
+            </select>
+          </div>
+          <div>
+            <Label>Categoría</Label>
+            <select className="w-full rounded-lg bg-bg-muted border border-neutral-800 px-3 py-2" value={form.category ?? ''} onChange={(e) => setForm((f) => ({ ...f, category: Number(e.currentTarget.value) || undefined }))}>
+              <option value="">—</option>
+              {cats.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+            </select>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
-

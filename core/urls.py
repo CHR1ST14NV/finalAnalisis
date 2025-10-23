@@ -27,6 +27,7 @@ urlpatterns = [
     path('api/', include('rest_framework.urls')),
     path('api/', include(api_urls)),
     path('api/auth/', include(accounts_urls)),
+    path('ui/', include('ui.urls')),
     # Frontend-expected endpoints
     path('api/catalog/products/', ProductsView.as_view(), name='catalog-products'),
     path('api/orders/', OrdersView.as_view(), name='orders'),

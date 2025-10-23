@@ -1,0 +1,49 @@
+{% extends 'ui/base.html' %}
+{% load ui_extras %}
+{% block content %}
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <h2 style="margin:0">{{ app_label|title }} / {{ model_name }}</h2>
+      <div style="display:flex;gap:8px">
+        <a class="btn" href="/ui/{{ app_label }}/{{ model_name }}/new/">Nuevo</a>
+        <a class="btn ghost" href="/ui/">Volver</a>
+      </div>
+    </div>
+    <form method="get" style="margin:12px 0;display:flex;gap:8px">
+      <input name="q" value="{{ q }}" placeholder="Buscar por texto" />
+      <button class="btn">Filtrar</button>
+    </form>
+    <div style="overflow:auto">
+      <table>
+        <thead>
+          <tr>
+            {% for f in fields %}<th>{{ f }}</th>{% endfor %}
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for obj in page_obj.object_list %}
+            <tr>
+              {% for f in fields %}
+                <td>{{ obj|attr:f }}</td>
+              {% endfor %}
+              <td style="text-align:right">
+                <a class="btn" href="/ui/{{ app_label }}/{{ model_name }}/{{ obj.pk }}/edit/">Editar</a>
+                <a class="btn err" href="/ui/{{ app_label }}/{{ model_name }}/{{ obj.pk }}/delete/">Eliminar</a>
+              </td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="99" class="muted">Sin registros</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="muted" style="display:flex;justify-content:space-between;margin-top:8px">
+      <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }} · {{ page_obj.paginator.count }} registros</span>
+      <div>
+        {% if page_obj.has_previous %}<a class="btn ghost" href="?page={{ page_obj.previous_page_number }}&q={{ q }}">Anterior</a>{% endif %}
+        {% if page_obj.has_next %}<a class="btn ghost" href="?page={{ page_obj.next_page_number }}&q={{ q }}">Siguiente</a>{% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

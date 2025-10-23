@@ -140,6 +140,26 @@ export async function fetchProducts(params: { page?: number; q?: string }) {
   return api<{ results: Product[]; count: number }>(url);
 }
 
+// Catalog CRUD (direct to DRF routers)
+export type Brand = { id: number; name: string };
+export type Category = { id: number; name: string; parent?: number | null };
+export async function listBrands() {
+  return api<Brand[]>(`/catalog-brand/`);
+}
+export async function listCategories() {
+  return api<Category[]>(`/catalog-category/`);
+}
+export type ProductIn = { name: string; brand?: number | null; category?: number | null };
+export async function createProductApi(payload: ProductIn) {
+  return api(`/catalog-product/`, { method: 'POST', body: JSON.stringify(payload) });
+}
+export async function updateProductApi(id: number, payload: ProductIn) {
+  return api(`/catalog-product/${id}/`, { method: 'PUT', body: JSON.stringify(payload) });
+}
+export async function deleteProductApi(id: number) {
+  return api(`/catalog-product/${id}/`, { method: 'DELETE' });
+}
+
 export async function fetchOrders() {
   return api<Order[]>(`/orders/`);
 }

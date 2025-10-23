@@ -1,0 +1,22 @@
+{% extends 'ui/base.html' %}
+{% block content %}
+  <div class="card">
+    <h2 style="margin-top:0">{{ action }} {{ app_label }} / {{ model_name }}</h2>
+    <form method="post" class="grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      {% for field in form %}
+        <div>
+          <label class="muted">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}<div class="muted" style="font-size:12px">{{ field.help_text }}</div>{% endif %}
+          {% for err in field.errors %}<div class="alert err">{{ err }}</div>{% endfor %}
+        </div>
+      {% endfor %}
+      <div style="grid-column:1/-1;margin-top:6px">
+        <button class="btn ok" type="submit">Guardar</button>
+        <a class="btn ghost" href="/ui/{{ app_label }}/{{ model_name }}/">Cancelar</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

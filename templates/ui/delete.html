@@ -1,0 +1,13 @@
+{% extends 'ui/base.html' %}
+{% block content %}
+  <div class="card">
+    <h2>Eliminar</h2>
+    <p>¿Seguro que deseas eliminar: <strong>{{ object }}</strong>?</p>
+    <form method="post">
+      {% csrf_token %}
+      <button class="btn err" type="submit">Eliminar</button>
+      <a class="btn ghost" href="/ui/{{ app_label }}/{{ model_name }}/">Cancelar</a>
+    </form>
+  </div>
+{% endblock %}
+
