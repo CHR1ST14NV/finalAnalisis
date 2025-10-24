@@ -9,7 +9,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from accounts.urls import urlpatterns as accounts_urls
 from .api import urlpatterns as api_urls
 from .api_custom import ProductsView, OrdersView, OrderConfirmView
-from .api_custom import KPIsView
+from .api_custom import KPIsView, InventoryAvailabilityView
 from healthz import healthz
 
 @api_view(['GET'])
@@ -36,5 +36,6 @@ urlpatterns = [
     path('api/orders/', OrdersView.as_view(), name='orders'),
     path('api/orders/<int:pk>/confirm/', OrderConfirmView.as_view(), name='order-confirm'),
     path('api/metrics/kpis/', KPIsView.as_view(), name='kpis'),
+    path('api/inventory/availability/', InventoryAvailabilityView.as_view(), name='inventory-availability'),
     path('', index, name='index'),
 ]

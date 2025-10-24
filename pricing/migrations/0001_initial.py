@@ -40,6 +40,6 @@ class Migration(migrations.Migration):
                 ('sku', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='catalog.sku')),
             ],
         ),
-        migrations.AlterUniqueTogether(name='priceitem', unique_together={(('pricelist', 'sku', 'valid_from'),)}),
+        # Ensure correct structure: a set of tuples of field names
+        migrations.AlterUniqueTogether(name='priceitem', unique_together={('pricelist', 'sku', 'valid_from')}),
     ]
-

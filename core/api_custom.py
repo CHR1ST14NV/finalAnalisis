@@ -15,6 +15,7 @@ from pricing.models import PriceList, PriceItem
 from orders.models import RetailerOrder, OrderItem
 from partners.models import Retailer
 from warehouses.models import Warehouse, InventoryBatch
+from django.db.models import Sum, F
 
 
 class ProductsView(APIView):
@@ -157,9 +158,10 @@ class KPIsView(APIView):
         delivered = RetailerOrder.objects.filter(status=RetailerOrder.DELIVERED).count()
         fill_rate = (delivered / total) if total else 0.0
 
-        stock_total = InventoryBatch.objects.aggregate(total_qty=Decimal("0") + (0)).get("total_qty")
-        if stock_total is None:
-            stock_total = 0
+        # Sum on-hand quantity across batches; fallback to 0 if no rows
+        stock_total = (
+            InventoryBatch.objects.aggregate(total_qty=Sum("qty_on_hand")).get("total_qty") or 0
+        )
 
         # lead time approximation using updated_at as proxy
         lead_times: List[float] = []
@@ -192,3 +194,21 @@ def percentile(values: List[float], p: int) -> float:
     d1 = values[c] * (k - f)
     return d0 + d1
 
+
+class InventoryAvailabilityView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        sku_code = request.query_params.get("sku")
+        if not sku_code:
+            return Response({"detail": "Missing 'sku' query param"}, status=400)
+
+        sku = SKU.objects.filter(code=sku_code).first()
+        if not sku:
+            return Response({"sku": sku_code, "available": 0, "found": False})
+
+        agg = InventoryBatch.objects.filter(sku=sku).aggregate(
+            available=Sum(F("qty_on_hand") - F("qty_reserved"))
+        )
+        available = int(agg.get("available") or 0)
+        return Response({"sku": sku.code, "available": available, "found": True})

@@ -43,7 +43,7 @@
   <div class="container">
     {% if messages %}
       {% for m in messages %}
-        <div class="alert {{ 'ok' if m.tags == 'success' else 'err' if 'error' in m.tags else '' }}">{{ m }}</div>
+        <div class="alert {% if m.tags == 'success' %}ok{% elif 'error' in m.tags %}err{% endif %}">{{ m }}</div>
       {% endfor %}
     {% endif %}
     {% block content %}{% endblock %}
