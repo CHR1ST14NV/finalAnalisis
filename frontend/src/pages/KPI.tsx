@@ -46,6 +46,7 @@ export default function KPI() {
           </LineChart>
         </ResponsiveContainer>
       </div>
+      {loading && <div className="h-6 w-24 skeleton" />}
     </div>
   );
 }

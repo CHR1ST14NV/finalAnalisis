@@ -64,7 +64,7 @@ export default function Register() {
           </div>
           <div>
             <Label>Rol</Label>
-            <select value={role} onChange={(e) => setRole(e.currentTarget.value)} className="w-full rounded-lg bg-bg-muted border border-neutral-800 px-3 py-2">
+            <select value={role} onChange={(e) => setRole(e.currentTarget.value)} className="select">
               {roles.map((r) => (
                 <option key={r.id} value={r.code}>{r.name} ({r.code})</option>
               ))}
@@ -77,3 +77,4 @@ export default function Register() {
     </div>
   );
 }
+

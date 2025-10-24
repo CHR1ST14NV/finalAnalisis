@@ -4,7 +4,7 @@ import { z } from 'zod';
 // Uses sessionStorage to persist across refresh without writing long-lived tokens to disk
 const TOKENS_KEY = 'chan.tokens';
 
-const API_BASE = '/api';
+const API_BASE = (import.meta as any).env?.VITE_API_BASE || '/api';
 
 export const jwtSchema = z.object({
   access: z.string(),

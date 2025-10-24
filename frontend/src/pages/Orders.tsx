@@ -43,7 +43,7 @@ export default function Orders() {
     try {
       const d = await fetchOrders();
       setOrders(d);
-    } catch (e) {
+    } catch {
       setErr('Error cargando pedidos');
     } finally {
       setLoading(false);
@@ -120,13 +120,14 @@ export default function Orders() {
     }
   }
 
+  const total = useMemo(() => items.reduce((s, it) => s + it.qty * Number(it.unit_price || '0'), 0), [items]);
+
   return (
     <div className="container py-6 space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Pedidos</h1>
         <div className="flex gap-2">
           <Button onClick={() => setShowCreate(true)}>Crear pedido</Button>
-          <Button onClick={load} variant="ghost">Refrescar</Button>
         </div>
       </div>
 
@@ -194,7 +195,7 @@ export default function Orders() {
             </div>
             <div>
               <Label>Canal</Label>
-              <select value={channel} onChange={(e) => setChannel(e.currentTarget.value as any)} className="w-full rounded-lg bg-bg-muted border border-neutral-800 px-3 py-2">
+              <select value={channel} onChange={(e) => setChannel(e.currentTarget.value as any)} className="select">
                 <option value="B2B">B2B</option>
                 <option value="B2C">B2C</option>
               </select>
@@ -248,6 +249,9 @@ export default function Orders() {
                 ))}
               </tbody>
             </Table>
+            <div className="flex items-center justify-end text-sm text-neutral-300 mt-2">
+              <span>Total: Q {total.toFixed(2)}</span>
+            </div>
           </div>
 
           {formError && <p className="text-rose-400 text-sm">{formError}</p>}

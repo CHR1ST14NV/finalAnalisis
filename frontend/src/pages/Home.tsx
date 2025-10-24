@@ -1,4 +1,4 @@
-﻿import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { kpis } from '../lib/api';
 
@@ -34,10 +34,10 @@ export default function Home() {
               observabilidad listas para producción.
             </p>
             <div className="flex gap-3">
-              <Link className="btn" to="/products">Ver productos</Link>
-              <Link className="btn" to="/orders">Crear pedido</Link>
-              <a className="btn" href="/ui/">UI CRUD</a>
-              <a className="btn" href="/admin/">Admin</a>
+              <Link className="btn btn-primary" to="/products">Ver productos</Link>
+              <Link className="btn btn-ghost" to="/orders">Crear pedido</Link>
+              <a className="btn btn-ghost" href="/ui/">UI CRUD</a>
+              <a className="btn btn-ghost" href="/admin/">Admin</a>
             </div>
           </div>
         </div>
@@ -54,7 +54,7 @@ export default function Home() {
       <section className="container pb-10 grid md:grid-cols-3 gap-6">
         <Feature title="Inventario" desc="Reservas atómicas y asignación FEFO." />
         <Feature title="Pedidos & Fulfillment" desc="Flujos B2B/B2C con confirmación y envío." />
-        <Feature title="CRUD UI" desc="Admin y UI server‑side listos para gestionar todo." />
+        <Feature title="CRUD UI" desc="Admin y UI server-side listos para gestionar todo." />
       </section>
     </div>
   );
@@ -79,10 +79,11 @@ function Feature({ title, desc }: { title: string; desc: string }) {
 }
 
 function fmtInt(v?: number | null) {
-  if (v == null) return '—';
+  if (v == null) return '-';
   return new Intl.NumberFormat('es').format(v);
 }
 function fmtPct(v?: number | null) {
-  if (v == null) return '—';
+  if (v == null) return '-';
   return `${(v * 100).toFixed(1)}%`;
 }
+

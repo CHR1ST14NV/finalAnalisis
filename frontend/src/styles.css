@@ -3,43 +3,48 @@
 @tailwind utilities;
 
 :root {
+  /* Design tokens */
   --radius: 14px;
+  --shadow-soft: 0 10px 25px rgba(0,0,0,.35);
 }
 
+/* Background accents */
 .gradient-bg {
-  background-image: radial-gradient(60% 60% at 10% -10%, rgba(34, 211, 238, 0.15), transparent),
-    radial-gradient(60% 60% at 90% 0%, rgba(59, 130, 246, 0.12), transparent);
+  background-image:
+    radial-gradient(60% 60% at 10% -10%, rgba(34, 211, 238, 0.12), transparent),
+    radial-gradient(60% 60% at 90% 0%, rgba(59, 130, 246, 0.10), transparent);
 }
 
-.container {
-  @apply max-w-7xl mx-auto px-4;
-}
-
-.card {
-  @apply rounded-xl bg-bg-card/80 border border-neutral-800 p-5 shadow-sm;
-}
-
-.btn {
-  @apply inline-flex items-center justify-center rounded-lg bg-primary/90 hover:bg-primary text-white px-4 py-2 transition-colors;
-}
-
+/* Layout primitives */
+.container { @apply max-w-7xl mx-auto px-4; }
+.card { @apply rounded-xl bg-bg-card/90 border border-neutral-800 p-5 shadow-sm; box-shadow: var(--shadow-soft); }
 .muted { @apply text-fg-muted; }
-
 .chip { @apply rounded-full px-2 py-0.5 text-xs border border-neutral-700; }
+.skeleton { @apply animate-pulse bg-neutral-800 rounded; }
 
+/* Controls */
+.btn { @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-colors; }
+.btn-primary { @apply bg-primary/90 hover:bg-primary text-white; }
+.btn-ghost { @apply bg-transparent text-neutral-200 hover:bg-neutral-900 border border-neutral-800; }
+.btn-danger { @apply bg-red-600/90 hover:bg-red-600 text-white; }
+.btn:disabled { @apply opacity-60 cursor-not-allowed; }
+
+.input, .select, .textarea {
+  @apply w-full rounded-lg bg-bg-muted border border-neutral-800 px-3 py-2 text-sm text-neutral-100 placeholder-neutral-500;
+}
+.label { @apply block text-sm text-neutral-400 mb-1; }
+
+/* Tables */
 .table { @apply w-full border-collapse text-sm; }
 .table th { @apply text-left font-semibold text-neutral-300 border-b border-neutral-800 py-2; }
 .table td { @apply border-b border-neutral-900 py-2; }
+.table tr:hover { @apply bg-neutral-900/50; }
 
-.skeleton { @apply animate-pulse bg-neutral-800 rounded; }
-
-header.site {
-  @apply sticky top-0 z-50 bg-neutral-950/80 backdrop-blur border-b border-neutral-900;
-}
-
+/* Site header */
+header.site { @apply sticky top-0 z-50 bg-neutral-950/85 backdrop-blur border-b border-neutral-900; }
 nav.top a { @apply text-neutral-300 hover:text-white transition-colors; }
 nav.top a.active { @apply text-white; }
 
-/* Modal helpers */
+/* Modal primitives (Radix overlay/content) */
 .modal-overlay { @apply fixed inset-0 bg-black/50; }
 .modal-panel { @apply rounded-xl bg-neutral-950 border border-neutral-800 shadow-xl; }

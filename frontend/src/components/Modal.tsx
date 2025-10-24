@@ -11,25 +11,23 @@ export function Modal({ open, onOpenChange, title, children, footer }: {
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,.5)' }} />
-        <Dialog.Content className="modal d-block" style={{ display: 'block' }}>
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <Dialog.Title className="modal-title">{title}</Dialog.Title>
-                <Dialog.Close className="btn-close" aria-label="Close" />
-              </div>
-              <div className="modal-body">
-                {children}
-              </div>
-              {footer && (
-                <div className="modal-footer">
-                  {footer}
-                </div>
-              )}
+        <Dialog.Overlay className="modal-overlay" />
+        <div className="fixed inset-0 grid place-items-center p-4">
+          <Dialog.Content className="modal-panel w-full max-w-2xl">
+            <div className="p-4 border-b border-neutral-800 flex items-center justify-between">
+              <Dialog.Title className="text-lg font-semibold">{title}</Dialog.Title>
+              <Dialog.Close className="btn btn-ghost px-2 py-1" aria-label="Close">✕</Dialog.Close>
             </div>
-          </div>
-        </Dialog.Content>
+            <div className="p-4">
+              {children}
+            </div>
+            {footer && (
+              <div className="p-4 border-t border-neutral-800 flex items-center justify-end gap-2">
+                {footer}
+              </div>
+            )}
+          </Dialog.Content>
+        </div>
       </Dialog.Portal>
     </Dialog.Root>
   );

@@ -1,5 +1,6 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
+from django.views.generic import RedirectView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -28,6 +29,8 @@ urlpatterns = [
     path('api/', include(api_urls)),
     path('api/auth/', include(accounts_urls)),
     path('ui/', include('ui.urls')),
+    # Convenience alias: /crud -> /ui
+    re_path(r'^crud/?$', RedirectView.as_view(url='/ui/', permanent=False)),
     # Frontend-expected endpoints
     path('api/catalog/products/', ProductsView.as_view(), name='catalog-products'),
     path('api/orders/', OrdersView.as_view(), name='orders'),
