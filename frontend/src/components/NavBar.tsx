@@ -11,12 +11,15 @@ export default function NavBar() {
     navigate('/login');
   }
 
+  // No mostrar navbar cuando no hay sesión
+  if (!authed) return null;
+
   return (
     <header className="site">
       <div className="container">
         <nav className="top flex items-center gap-6 py-3">
           <NavLink to="/" className="text-lg font-semibold">Canal</NavLink>
-          <div className="flex items-center gap-4">
+          <div className="links flex items-center gap-1">
             <NavLink to="/" end className={({isActive}) => isActive ? 'active' : ''}>Inicio</NavLink>
             <NavLink to="/products" className={({isActive}) => isActive ? 'active' : ''}>Catálogo</NavLink>
             <NavLink to="/orders" className={({isActive}) => isActive ? 'active' : ''}>Pedidos</NavLink>
@@ -24,19 +27,14 @@ export default function NavBar() {
             <NavLink to="/kpi" className={({isActive}) => isActive ? 'active' : ''}>KPI</NavLink>
           </div>
           <div className="ml-auto flex items-center gap-2">
-            {!authed ? (
-              <NavLink to="/login" className="btn btn-ghost">Login</NavLink>
-            ) : (
-              <>
-                <a href={`${backend}/admin/`} className="btn btn-ghost" rel="noreferrer">Admin</a>
-                <a href={`${backend}/ui/`} className="btn btn-ghost" rel="noreferrer">UI</a>
-                <NavLink to="/profile" className={({ isActive }) => `btn btn-ghost${isActive ? ' active' : ''}`}>Perfil</NavLink>
-                <button onClick={onLogout} className="btn btn-primary">Salir</button>
-              </>
-            )}
+            <a href={`${backend}/admin/`} className="btn btn-ghost" rel="noreferrer">Admin</a>
+            <a href={`${backend}/ui/`} className="btn btn-ghost" rel="noreferrer">UI</a>
+            <NavLink to="/profile" className={({ isActive }) => `btn btn-ghost${isActive ? ' active' : ''}`}>Perfil</NavLink>
+            <button onClick={onLogout} className="btn btn-primary">Salir</button>
           </div>
         </nav>
       </div>
     </header>
   );
 }
+

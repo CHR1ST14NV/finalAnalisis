@@ -29,8 +29,8 @@ export default function Inventory() {
     <div className="container py-6 space-y-4">
       <div className="flex items-end gap-2">
         <div className="flex-1">
-          <label className="block text-sm mb-1">SKU ID</label>
-          <Input placeholder="UUID del SKU" value={sku} onChange={(e) => setSku(e.currentTarget.value)} />
+          <label className="block text-sm mb-1">Código de SKU</label>
+          <Input placeholder="Código o ID del SKU" value={sku} onChange={(e) => setSku(e.currentTarget.value)} />
         </div>
         <Button onClick={load}>Consultar</Button>
       </div>
@@ -58,4 +58,3 @@ export default function Inventory() {
     </div>
   );
 }
-

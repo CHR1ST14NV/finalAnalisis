@@ -199,16 +199,44 @@ class InventoryAvailabilityView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        sku_code = request.query_params.get("sku")
-        if not sku_code:
-            return Response({"detail": "Missing 'sku' query param"}, status=400)
+        """
+        Returns availability by warehouse for a given SKU.
 
-        sku = SKU.objects.filter(code=sku_code).first()
+        The frontend expects a list of objects like:
+        [{"sku_id": "1", "warehouse_id": "2", "available": 10}, ...]
+
+        For resiliency, this endpoint accepts either a SKU code or an ID in the
+        `sku` query parameter. If nothing is found, an empty list is returned
+        instead of an object so the UI can safely `.map()` it.
+        """
+        sku_q = request.query_params.get("sku")
+        if not sku_q:
+            # Frontend maps the response; return an empty list instead of 400
+            return Response([])
+
+        # Try by code first; if numeric, also try by ID
+        sku = SKU.objects.filter(code=sku_q).first()
+        if not sku and sku_q.isdigit():
+            try:
+                sku = SKU.objects.filter(id=int(sku_q)).first()
+            except Exception:
+                sku = None
+
         if not sku:
-            return Response({"sku": sku_code, "available": 0, "found": False})
+            return Response([])
 
-        agg = InventoryBatch.objects.filter(sku=sku).aggregate(
-            available=Sum(F("qty_on_hand") - F("qty_reserved"))
+        rows = (
+            InventoryBatch.objects.filter(sku=sku)
+            .values("warehouse_id")
+            .annotate(available=Sum(F("qty_on_hand") - F("qty_reserved")))
+            .order_by("warehouse_id")
         )
-        available = int(agg.get("available") or 0)
-        return Response({"sku": sku.code, "available": available, "found": True})
+        data = [
+            {
+                "sku_id": str(sku.id),
+                "warehouse_id": str(r["warehouse_id"]),
+                "available": int(r.get("available") or 0),
+            }
+            for r in rows
+        ]
+        return Response(data)
