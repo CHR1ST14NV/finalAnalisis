@@ -1,3 +1,4 @@
+"""Rutas de cuentas (Grupo #6)."""
 from django.urls import path
 from .views import RegisterView, RoleListView, MeView
 

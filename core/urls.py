@@ -39,3 +39,8 @@ urlpatterns = [
     path('api/inventory/availability/', InventoryAvailabilityView.as_view(), name='inventory-availability'),
     path('', index, name='index'),
 ]
+"""URL routing del backend (Grupo #6).
+
+Incluye endpoints API (DRF + esquema/Swagger), autenticación JWT,
+vistas CRUD server‑side y utilidades de salud.
+"""

@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+"""Punto de entrada de Django (Grupo #6).
+
+Arranca con `core.settings` y está listo para ejecutarse en Docker.
+"""
 import os
 import sys
 

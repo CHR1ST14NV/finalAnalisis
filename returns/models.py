@@ -1,3 +1,4 @@
+"""Devoluciones y recompras (Grupo #6)."""
 from django.db import models
 from common.models import AbstractAuditMixin
 from partners.models import Retailer
@@ -12,4 +13,3 @@ class BuybackItem(AbstractAuditMixin):
     buyback = models.ForeignKey(Buyback, on_delete=models.CASCADE, related_name='items')
     batch = models.ForeignKey(InventoryBatch, on_delete=models.PROTECT)
     qty = models.IntegerField()
-

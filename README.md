@@ -1,6 +1,8 @@
-# finalAnalisis ‚Äì Stack Docker + Django + MySQL
+# finalAnalisis ó Stack Docker + Django + MySQL (Grupo #6)
 
-Proyecto listo para levantar con un solo comando usando MySQL dentro del mismo `docker compose`. La app espera a la base, migra y arranca autom√°ticamente.
+Este proyecto full-stack (backend Django + frontend Vite/React + Nginx) est· listo para levantarse con un solo comando. La base de datos MySQL se inicializa con todo el esquema y datos de ejemplo ya incluidos.
+
+Importante: toda la atribuciÛn y notas de Grupo #6 est·n solo en comentarios de cÛdigo/docstrings; no se muestra nada al usuario final.
 
 ## Levantar servicios
 
@@ -9,17 +11,17 @@ docker compose up -d --build
 ```
 
 - API directa (Django): http://localhost:8001/
-- API v√≠a Nginx: http://localhost:3000/api/
-- Frontend (Nginx ‚Üí Vite static): http://localhost:3000/
+- API vÌa Nginx: http://localhost:3000/api/
+- Frontend (est·tico con Vite servido por Nginx): http://localhost:3000/
 - UI CRUD (server-side): http://localhost:3000/ui/
 - MySQL (host): 127.0.0.1:3309 (usuario: `root`, pass: `admin`)
 - Adminer: http://localhost:8080/ (Servidor: `mysql`, Usuario: `root`, Pass: `admin`, DB: `final_analisis`)
 
-El servicio `web` espera a MySQL, crea la base si no existe, GENERA migraciones que falten (makemigrations), migra con `--fake-initial` para respetar tablas ya existentes en tu MySQL, carga est√°ticos y arranca en `0.0.0.0:8000`. El healthcheck expone `GET /healthz` dentro del contenedor y es usado por Compose.
+El servicio `web` espera la base, crea la BD si no existe, aplica migraciones de forma segura para respetar esquemas ya poblados, recolecta est·ticos y arranca `runserver` en `0.0.0.0:8000`. Healthcheck: `GET /healthz`.
 
 ## Variables de entorno (.env)
 
-Se incluye `.env.example` con valores por defecto. Copia como `.env` si lo necesitas.
+Hay un `.env.example` con valores por defecto. Puedes copiarlo a `.env` si lo necesitas.
 
 Claves relevantes:
 
@@ -41,7 +43,7 @@ MYSQL_PASSWORD=admin
 MYSQL_HOST_DOCKER=mysql
 MYSQL_PORT_DOCKER=3306
 
-# Crear superusuario autom√°ticamente (opcional)
+# Crear superusuario autom·ticamente (opcional)
 DJANGO_SUPERUSER_EMAIL=admin@local
 DJANGO_SUPERUSER_USERNAME=admin
 DJANGO_SUPERUSER_PASSWORD=admin12345
@@ -49,13 +51,12 @@ DJANGO_SUPERUSER_PASSWORD=admin12345
 ENV=dev
 ```
 
-La configuraci√≥n de Django detecta si `MYSQL_HOST` es `127.0.0.1` o `localhost` y en ese caso usa autom√°ticamente `MYSQL_HOST_DOCKER=mysql` al correr dentro del contenedor.
+La configuraciÛn de Django detecta si `MYSQL_HOST` es `127.0.0.1` o `localhost` y en ese caso usa autom·ticamente `MYSQL_HOST_DOCKER=mysql` cuando corre dentro del contenedor.
 
-Notas sobre migraciones y tu base existente:
+### Migraciones y base pre-cargada
 
-- Si tu volumen de MySQL ya contiene el esquema y datos (como tu `sql.sql`), el paso `migrate --fake-initial` marcar√° los migrations iniciales como aplicados sin tocar las tablas.
-- Si faltaran archivos de migraci√≥n en el repo para alguna app, el entrypoint ejecuta `makemigrations` antes de migrar, gener√°ndolos autom√°ticamente y manteni√©ndolos en el volumen del proyecto.
-- Esto te permite clonar y levantar con un solo comando sin ‚Äútruenes‚Äù, conservando la base ya poblada en Docker.
+- Si tu volumen de MySQL ya contiene el esquema y datos (los del repo), el entrypoint usa estrategias conservadoras (`--fake-initial` y ajustes de Ìndices) para no romper nada.
+- Si necesitas crear tablas porque el SQL no corriÛ por alguna razÛn, el servicio `web` aplica migraciones al arrancar (configurado por defecto para robustez).
 
 ## Probar la base de datos (desde tu host)
 
@@ -72,7 +73,7 @@ MYSQL_HOST=host.docker.internal
 MYSQL_PORT=3306
 ```
 
-En Linux agrega al servicio `web` de `docker-compose.yml`:
+En Linux agrega al servicio `web` en `docker-compose.yml`:
 
 ```
 extra_hosts:
@@ -81,6 +82,6 @@ extra_hosts:
 
 ## Notas
 
-- No se requiere Postgres. El backend es `django.db.backends.mysql` y `requirements.txt` incluye `mysqlclient`.
-- Se a√±adi√≥ healthcheck al servicio web y `curl` en la imagen para mayor confiabilidad en arranque.
-- Hay archivos de otra plataforma (`chan_platform`, k8s, etc.) que no se usan en este stack con MySQL; puedes ignorarlos o removerlos si deseas simplificar a√∫n m√°s.
+- No se requiere Postgres. El backend usa `django.db.backends.mysql` y `requirements.txt` incluye `mysqlclient`.
+- El proyecto incluye healthcheck y utilidades para evitar condiciones de carrera al arrancar.
+- Se eliminaron archivos no usados (k8s, OTel, Prometheus, plantillas antiguas) para simplificar el stack.

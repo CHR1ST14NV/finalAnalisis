@@ -32,8 +32,9 @@ echo "MySQL is ready"
 DB_NAME_CREATE=${MYSQL_DB:-${DB_NAME:-final_analisis}}
 mysql --protocol=tcp -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -e "CREATE DATABASE IF NOT EXISTS \`${DB_NAME_CREATE}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" || true
 
-# Optionally apply migrations (disabled by default because DB is pre-seeded)
-if [ "${MIGRATE_ON_START:-0}" = "1" ]; then
+# Grupo #6: aplicamos migraciones por defecto para robustez en clones limpios
+# (si la base ya está pre-cargada, se usan flags para evitar conflictos)
+if [ "${MIGRATE_ON_START:-1}" = "1" ]; then
   # Apply migrations against the existing DB
   # --fake-initial will mark initial migrations as applied if tables already exist
   if [ "${AUTO_MAKEMIGRATIONS:-0}" = "1" ]; then

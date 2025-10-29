@@ -1,3 +1,4 @@
+"""Precios y listas de precios (Grupo #6)."""
 from django.db import models
 from common.models import AbstractAuditMixin
 from catalog.models import SKU
@@ -21,4 +22,3 @@ class PriceItem(AbstractAuditMixin):
 
     class Meta:
         unique_together = (('pricelist', 'sku', 'valid_from'),)
-

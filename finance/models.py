@@ -1,3 +1,4 @@
+"""Finanzas: términos de crédito y liquidaciones (Grupo #6)."""
 from django.db import models
 from common.models import AbstractAuditMixin
 from partners.models import Distributor, Retailer
@@ -24,4 +25,3 @@ class SettlementLine(AbstractAuditMixin):
     settlement = models.ForeignKey(Settlement, on_delete=models.CASCADE, related_name='lines')
     order = models.ForeignKey(RetailerOrder, on_delete=models.PROTECT)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
-

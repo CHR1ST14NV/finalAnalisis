@@ -1,3 +1,4 @@
+"""Cumplimiento y envíos (Grupo #6)."""
 from django.db import models
 from common.models import AbstractAuditMixin
 from orders.models import RetailerOrder, OrderItem
@@ -29,4 +30,3 @@ class ShipmentItem(AbstractAuditMixin):
     shipment = models.ForeignKey(Shipment, on_delete=models.CASCADE, related_name='items')
     order_item = models.ForeignKey(OrderItem, on_delete=models.PROTECT)
     qty = models.IntegerField()
-
