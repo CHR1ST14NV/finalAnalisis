@@ -1,3 +1,4 @@
+"""Modelos comunes y mixins (Grupo #6)."""
 from django.db import models
 from django.conf import settings
 
@@ -14,4 +15,3 @@ class AbstractAuditMixin(models.Model):
 
     class Meta:
         abstract = True
-

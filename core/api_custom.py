@@ -244,3 +244,8 @@ class InventoryAvailabilityView(APIView):
             for r in rows
         ]
         return Response(data)
+"""Endpoints de negocio a medida (Grupo #6).
+
+Ofrece listados de productos con precios, CRUD de órdenes simplificado,
+KPIs básicos y disponibilidad de inventario agregada por bodega.
+"""

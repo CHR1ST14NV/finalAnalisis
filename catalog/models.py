@@ -1,3 +1,4 @@
+"""Catálogo de productos (Grupo #6)."""
 from django.db import models
 from common.models import AbstractAuditMixin
 
@@ -33,4 +34,3 @@ class SKU(AbstractAuditMixin):
 
     def __str__(self):
         return self.code
-

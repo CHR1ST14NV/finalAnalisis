@@ -1,3 +1,8 @@
+"""Vistas CRUD server‑side para demo (Grupo #6).
+
+No muestran referencias visibles al usuario final; toda la
+atribución de Grupo #6 está en comentarios/docstrings.
+"""
 from __future__ import annotations
 
 from typing import Any, Dict, List, Tuple

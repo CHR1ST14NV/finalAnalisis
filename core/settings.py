@@ -96,3 +96,9 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'accounts.User'
 LOGIN_URL = '/admin/login/'
+"""Configuración principal de Django para finalAnalisis.
+
+Este backend fue ensamblado y documentado por el Grupo #6.
+Objetivo: stack full‑stack simple (Django + MySQL + Vite/React),
+con arranque por Docker Compose y datos demo opcionales.
+"""

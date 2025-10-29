@@ -1,3 +1,4 @@
+"""Órdenes de retailers y líneas (Grupo #6)."""
 from django.db import models
 from common.models import AbstractAuditMixin
 from partners.models import Retailer
@@ -47,4 +48,3 @@ class Allocation(AbstractAuditMixin):
     order_item = models.ForeignKey(OrderItem, on_delete=models.CASCADE, related_name='allocations')
     batch = models.ForeignKey(InventoryBatch, on_delete=models.PROTECT)
     qty = models.IntegerField()
-

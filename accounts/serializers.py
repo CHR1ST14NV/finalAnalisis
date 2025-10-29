@@ -1,3 +1,4 @@
+"""Serializadores de cuentas (Grupo #6)."""
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .models import Role
@@ -25,4 +26,3 @@ class RegisterSerializer(serializers.Serializer):
         )
         user.roles.add(role)
         return user
-

@@ -1,3 +1,4 @@
+"""Promociones y descuentos (Grupo #6)."""
 from django.db import models
 from common.models import AbstractAuditMixin
 from catalog.models import SKU
@@ -13,4 +14,3 @@ class Promotion(AbstractAuditMixin):
 
     def __str__(self):
         return self.name
-

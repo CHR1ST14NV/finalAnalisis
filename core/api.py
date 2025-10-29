@@ -90,3 +90,8 @@ def build_router():
 
 router = build_router()
 urlpatterns = [path('', include(router.urls))]
+"""Enrutador dinámico de API (Grupo #6).
+
+Expone ModelViewSets generados para las apps de dominio, con
+permisos y filtros razonables para un uso demo/controlado.
+"""

@@ -1,3 +1,4 @@
+"""Modelos de socios comerciales (Grupo #6)."""
 from django.db import models
 from common.models import AbstractAuditMixin
 
@@ -17,4 +18,3 @@ class Retailer(AbstractAuditMixin):
 
     def __str__(self):
         return self.code
-
