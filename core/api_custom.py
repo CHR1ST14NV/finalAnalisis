@@ -227,14 +227,18 @@ class InventoryAvailabilityView(APIView):
 
         rows = (
             InventoryBatch.objects.filter(sku=sku)
-            .values("warehouse_id")
+            .values("warehouse_id", "warehouse__name", "warehouse__code")
             .annotate(available=Sum(F("qty_on_hand") - F("qty_reserved")))
             .order_by("warehouse_id")
         )
         data = [
             {
                 "sku_id": str(sku.id),
+                "sku_code": sku.code,
+                "product_name": getattr(sku.product, "name", ""),
                 "warehouse_id": str(r["warehouse_id"]),
+                "warehouse_name": r.get("warehouse__name") or r.get("warehouse__code") or str(r["warehouse_id"]),
+                "warehouse_code": r.get("warehouse__code") or "",
                 "available": int(r.get("available") or 0),
             }
             for r in rows

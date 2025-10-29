@@ -7,9 +7,14 @@ from .models import Role
 
 
 class RegisterView(APIView):
-    permission_classes = [AllowAny]
+    # Solo usuarios autenticados; validaremos rol ADMIN abajo
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        # Requiere rol ADMIN (o superusuario)
+        u = request.user
+        if not getattr(u, 'has_role', None) or not u.has_role(Role.ADMIN):
+            return Response({'detail': 'Forbidden'}, status=status.HTTP_403_FORBIDDEN)
         s = RegisterSerializer(data=request.data)
         s.is_valid(raise_exception=True)
         user = s.save()
@@ -17,7 +22,8 @@ class RegisterView(APIView):
 
 
 class RoleListView(APIView):
-    permission_classes = [AllowAny]
+    # Requiere autenticación (visible desde UI de admin)
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         data = RoleSerializer(Role.objects.all(), many=True).data
