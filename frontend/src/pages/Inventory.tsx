@@ -3,7 +3,14 @@ import { Table, Th, Td } from '../components/Table';
 import { Input, Button } from '../components/Form';
 import { api } from '../lib/api';
 
-type Availability = { sku_id: string; warehouse_id: string; available: number };
+type Availability = {
+  sku_id: string;
+  sku_code: string;
+  product_name: string;
+  warehouse_id: string;
+  warehouse_name: string;
+  available: number;
+};
 
 export default function Inventory() {
   const [sku, setSku] = useState('');
@@ -29,16 +36,22 @@ export default function Inventory() {
     <div className="container py-6 space-y-4">
       <div className="flex items-end gap-2">
         <div className="flex-1">
-          <label className="block text-sm mb-1">SKU ID</label>
-          <Input placeholder="UUID del SKU" value={sku} onChange={(e) => setSku(e.currentTarget.value)} />
+          <label className="block text-sm mb-1">Código de SKU</label>
+          <Input placeholder="Código o ID del SKU" value={sku} onChange={(e) => setSku(e.currentTarget.value)} />
         </div>
         <Button onClick={load}>Consultar</Button>
       </div>
       <div className="card">
+        {data && data.length > 0 && (
+          <div className="mb-3 text-sm text-neutral-300">
+            <span className="font-semibold">Producto:</span> {data[0]?.product_name ?? '—'}
+            <span className="ml-3 muted">SKU:</span> <span className="font-mono">{data[0]?.sku_code ?? ''}</span>
+          </div>
+        )}
         <Table>
           <thead>
             <tr>
-              <Th>Warehouse</Th>
+              <Th>Bodega</Th>
               <Th>Disponible</Th>
             </tr>
           </thead>
@@ -46,9 +59,12 @@ export default function Inventory() {
             {loading && (
               <tr><Td colSpan={2 as any}><div className="h-6 skeleton w-full" /></Td></tr>
             )}
+            {!loading && data.length === 0 && (
+              <tr><Td colSpan={2 as any} className="text-center text-neutral-400">Sin resultados</Td></tr>
+            )}
             {!loading && data.map((a) => (
               <tr key={a.warehouse_id}>
-                <Td className="font-mono text-xs">{a.warehouse_id.slice(0,8)}</Td>
+                <Td>{a.warehouse_name}</Td>
                 <Td>{a.available}</Td>
               </tr>
             ))}
@@ -58,4 +74,3 @@ export default function Inventory() {
     </div>
   );
 }
-

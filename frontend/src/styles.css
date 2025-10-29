@@ -41,9 +41,11 @@
 .table tr:hover { @apply bg-neutral-900/50; }
 
 /* Site header */
-header.site { @apply sticky top-0 z-50 bg-neutral-950/85 backdrop-blur border-b border-neutral-900; }
-nav.top a { @apply text-neutral-300 hover:text-white transition-colors; }
-nav.top a.active { @apply text-white; }
+header.site { @apply sticky top-0 z-50 bg-neutral-950/80 backdrop-blur border-b border-neutral-900 shadow-lg gradient-bg; }
+nav.top a { @apply text-neutral-300 transition-colors; }
+/* Pills for main navigation links */
+nav.top .links a { @apply text-neutral-300 hover:text-white px-3 py-1.5 rounded-md hover:bg-neutral-900/60; }
+nav.top .links a.active { @apply bg-neutral-900 text-white shadow; }
 
 /* Modal primitives (Radix overlay/content) */
 .modal-overlay { @apply fixed inset-0 bg-black/50; }

@@ -208,14 +208,11 @@ export async function kpis(params: { start?: string; end?: string; warehouse?: s
 // Registration and roles
 export type Role = { id: number; code: string; name: string };
 export async function fetchRoles(): Promise<Role[]> {
-  return fetch(`${API_BASE}/auth/roles`).then((r) => r.json());
+  return api<Role[]>(`/auth/roles`);
 }
 export async function registerUser(payload: { username: string; email: string; password: string; role_code: string }) {
-  const res = await fetch(`${API_BASE}/auth/register`, {
+  return api(`/auth/register`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   });
-  if (!res.ok) throw new Error(await res.text());
-  return res.json();
 }
