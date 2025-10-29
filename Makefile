@@ -3,7 +3,7 @@ SHELL := /bin/bash
 # Grupo #6: utilidades de desarrollo (Docker Compose)
 export COMPOSE := docker compose
 
-.PHONY: up down logs migrate su test lint format openapi seed
+.PHONY: up down logs migrate su seed lint format
 
 up:
 	$(COMPOSE) up -d --build
@@ -23,14 +23,8 @@ su:
 seed:
 	$(COMPOSE) exec web python manage.py seed_demo
 
-test:
-	$(COMPOSE) exec web pytest
-
 lint:
 	$(COMPOSE) exec web ruff check .
 
 format:
 	$(COMPOSE) exec web ruff check . --fix
-
-openapi:
-	$(COMPOSE) exec web python manage.py spectacular --file docs/openapi.json
