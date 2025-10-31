@@ -1,8 +1,8 @@
-# finalAnalisis — Stack Docker + Django + MySQL (Grupo #6)
+# finalAnalisis - Stack Docker + Django + MySQL (Grupo #6)
 
-Este proyecto full-stack (backend Django + frontend Vite/React + Nginx) está listo para levantarse con un solo comando. La base de datos MySQL se inicializa con todo el esquema y datos de ejemplo ya incluidos.
+Este proyecto full-stack (backend Django + frontend Vite/React + Nginx) esta listo para levantarse con un solo comando. La base de datos MySQL se inicializa con todo el esquema y datos de ejemplo ya incluidos.
 
-Importante: toda la atribución y notas de Grupo #6 están solo en comentarios de código/docstrings; no se muestra nada al usuario final.
+Importante: toda la atribucion y notas de Grupo #6 estan solo en comentarios de codigo/docstrings; no se muestra nada al usuario final.
 
 ## Levantar servicios
 
@@ -11,13 +11,13 @@ docker compose up -d --build
 ```
 
 - API directa (Django): http://localhost:8001/
-- API vía Nginx: http://localhost:3000/api/
-- Frontend (estático con Vite servido por Nginx): http://localhost:3000/
+- API via Nginx: http://localhost:3000/api/
+- Frontend (estetico con Vite servido por Nginx): http://localhost:3000/
 - UI CRUD (server-side): http://localhost:3000/ui/
 - MySQL (host): 127.0.0.1:3309 (usuario: `root`, pass: `admin`)
 - Adminer: http://localhost:8080/ (Servidor: `mysql`, Usuario: `root`, Pass: `admin`, DB: `final_analisis`)
 
-El servicio `web` espera la base, crea la BD si no existe, aplica migraciones de forma segura para respetar esquemas ya poblados, recolecta estáticos y arranca `runserver` en `0.0.0.0:8000`. Healthcheck: `GET /healthz`.
+El servicio `web` espera la base, crea la BD si no existe, aplica migraciones de forma segura para respetar esquemas ya poblados, recolecta estï¿½ticos y arranca `runserver` en `0.0.0.0:8000`. Healthcheck: `GET /healthz`.
 
 ## Variables de entorno (.env)
 
@@ -43,7 +43,7 @@ MYSQL_PASSWORD=admin
 MYSQL_HOST_DOCKER=mysql
 MYSQL_PORT_DOCKER=3306
 
-# Crear superusuario automáticamente (opcional)
+# Crear superusuario automï¿½ticamente (opcional)
 DJANGO_SUPERUSER_EMAIL=admin@local
 DJANGO_SUPERUSER_USERNAME=admin
 DJANGO_SUPERUSER_PASSWORD=admin12345
@@ -51,12 +51,12 @@ DJANGO_SUPERUSER_PASSWORD=admin12345
 ENV=dev
 ```
 
-La configuración de Django detecta si `MYSQL_HOST` es `127.0.0.1` o `localhost` y en ese caso usa automáticamente `MYSQL_HOST_DOCKER=mysql` cuando corre dentro del contenedor.
+La configuracion de Django detecta si `MYSQL_HOST` es `127.0.0.1` o `localhost` y en ese caso usa automï¿½ticamente `MYSQL_HOST_DOCKER=mysql` cuando corre dentro del contenedor.
 
 ### Migraciones y base pre-cargada
 
-- Si tu volumen de MySQL ya contiene el esquema y datos (los del repo), el entrypoint usa estrategias conservadoras (`--fake-initial` y ajustes de índices) para no romper nada.
-- Si necesitas crear tablas porque el SQL no corrió por alguna razón, el servicio `web` aplica migraciones al arrancar (configurado por defecto para robustez).
+- Si tu volumen de MySQL ya contiene el esquema y datos (los del repo), el entrypoint usa estrategias conservadoras (`--fake-initial` y ajustes de indices) para no romper nada.
+- Si necesitas crear tablas porque el SQL no corriï¿½ por alguna razï¿½n, el servicio `web` aplica migraciones al arrancar (configurado por defecto para robustez).
 
 ## Probar la base de datos (desde tu host)
 
