@@ -18,7 +18,10 @@ export default function NavBar() {
     <header className="site">
       <div className="container">
         <nav className="top flex items-center gap-6 py-3">
-          <NavLink to="/" className="text-lg font-semibold">Canal</NavLink>
+          <NavLink to="/" className="text-lg font-semibold flex items-center gap-2">
+            <img src="/logo.png" alt="Logo" className="h-6 w-6 rounded-md" />
+            <span>Canal</span>
+          </NavLink>
           <div className="links flex items-center gap-1">
             <NavLink to="/" end className={({isActive}) => isActive ? 'active' : ''}>Inicio</NavLink>
             <NavLink to="/products" className={({isActive}) => isActive ? 'active' : ''}>Catálogo</NavLink>

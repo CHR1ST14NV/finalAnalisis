@@ -24,7 +24,8 @@
     input,select{width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:#0f0f0f;color:var(--fg)}
     nav{background:#0d0d0d;border-bottom:1px solid var(--border);position:sticky;top:0}
     nav .container{display:flex;gap:16px;align-items:center}
-    nav a.brand{font-weight:700;letter-spacing:.3px}
+    nav a.brand{font-weight:700;letter-spacing:.3px;display:flex;align-items:center;gap:8px}
+    nav img.logo{height:28px;width:auto;border-radius:6px}
     .grid{display:grid;gap:12px}
     .alert{border:1px solid #2a2a2a;background:#121212;border-radius:10px;padding:12px;margin:12px 0}
     .alert.ok{border-color:#1f8c44}
@@ -32,9 +33,10 @@
   </style>
 </head>
 <body>
+  {% load static %}
   <nav>
     <div class="container">
-      <a class="brand" href="/ui/">UI CRUD</a>
+      <a class="brand" href="/ui/"><img class="logo" src="{% static 'ui/logo.png' %}" alt="Logo"> UI CRUD</a>
       <a href="/">Frontend</a>
       <a href="/admin/">Admin</a>
       <a href="/api/docs/">Docs</a>
