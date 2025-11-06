@@ -2,7 +2,7 @@
 
 Este proyecto full-stack (backend Django + frontend Vite/React + Nginx) esta listo para levantarse con un solo comando. La base de datos MySQL se inicializa con todo el esquema y datos de ejemplo ya incluidos.
 
-Importante: toda la atribucion y notas de Grupo #6 estan solo en comentarios de codigo/docstrings; no se muestra nada al usuario final.
+Importante: toda la atribucion y notas de Grupo #6
 
 ## Levantar servicios
 
@@ -82,6 +82,5 @@ extra_hosts:
 
 ## Notas
 
-- No se requiere Postgres. El backend usa `django.db.backends.mysql` y `requirements.txt` incluye `mysqlclient`.
+-  El backend usa `django.db.backends.mysql` y `requirements.txt` incluye `mysqlclient`.
 - El proyecto incluye healthcheck y utilidades para evitar condiciones de carrera al arrancar.
-- Se eliminaron archivos no usados (k8s, OTel, Prometheus, plantillas antiguas) para simplificar el stack.
